@@ -58,7 +58,8 @@ python3 /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/backe
    --conn_string_path /usr/config/connection.txt \
    --default_config_path /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/backend_ui_server/default_machine_config.json \
    --config_path /usr/config/machine_config.json \
-   --resource_path /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/resource &
+   --resource_path /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/resource \
+   --migrations_path /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/backend_ui_server/database/migrations &
    
 ros2 launch micro_ros_agent micro_ros_agent_launch.py &
 
