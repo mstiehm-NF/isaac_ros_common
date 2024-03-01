@@ -1,6 +1,8 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+ENV ROS_LOCALHOST_ONLY=1
+
 RUN apt-get update && apt-get install -y network-manager \
     && systemctl mask NetworkManager.service \
     && apt-get install -y python3-serial-asyncio \
