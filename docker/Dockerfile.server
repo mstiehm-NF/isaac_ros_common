@@ -1,8 +1,6 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-ENV ROS_LOCALHOST_ONLY=1
-
 RUN apt-get update && apt-get install -y network-manager \
     && systemctl mask NetworkManager.service \
     && apt-get install -y python3-serial-asyncio \
@@ -11,3 +9,5 @@ RUN apt-get update && apt-get install -y network-manager \
 
 #install deps
 RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device azure-storage-blob loguru nmcli
+
+ENV ROS_LOCALHOST_ONLY=1
