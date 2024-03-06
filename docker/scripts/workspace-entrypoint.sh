@@ -1,10 +1,14 @@
 #!/bin/bash
 
+NAMESPACE=''
+
+export ROS_DOMAIN_ID=0
+echo "export ROS_DOMAIN_ID=${ROS_DOMAIN_ID}" >> ~/.bashrc
 
 #Get platform
 PLATFORM="$(uname -m)"
 
-# Build ROS dependency
+# Build ROS dependencyS
 
 echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
@@ -70,6 +74,12 @@ colcon build  --continue-on-error --packages-select \
     mmc_ui_msgs \
     serial_ros_nodes \
     xacro \
+    realsense2_camera \
+    realsense2_camera_msgs \
+    realsense2_description \
+    realsense_splitter \
+    odometry_flattener \
+
 
     # Skip these packages for now
 
@@ -96,11 +106,7 @@ colcon build  --continue-on-error --packages-select \
     # nvblox_ros_common \
     # nvblox_rviz_plugin \
     # semantic_label_conversion \
-    # odometry_flattener \
-    # realsense2_camera \
-    # realsense2_camera_msgs \
-    # realsense2_description \
-    # realsense_splitter \
+
 
 
 echo "source /workspaces/isaac_ros-dev/install/setup.bash" >> ~/.bashrc
@@ -119,10 +125,14 @@ export RUN_DEV=true
 #Install can if not already installed
 if [ -d "/sys/class/net/can0" ]; then
     echo "CAN Installed"
-    ros2 run py_ui_messaging run_msgs &
+    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=${NAMESPACE} &
 else
-    echo "CAN Controller is not configured on this device!"
+    echo "CAN Controller is not configured on this device!" &
 fi
+
+ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r /image_raw:=/image  -r __ns:=/${NAMESPACE} &
+
+ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${NAMESPACE} &
 
 # If VS Code is installed
 if [[ "$VSCODE" == true ]]; then
@@ -135,9 +145,9 @@ if [[ "$VSCODE" == true ]]; then
     code --disable-gpu
 fi
 
-ros2 launch micro_ros_agent micro_ros_agent_launch.py &
-
 # Start the applications
-ros2 run backend_ui_server server
+ros2 run backend_ui_server server --ros-args -r __ns:=/${NAMESPACE}
+
+exit 0
 
 $@
