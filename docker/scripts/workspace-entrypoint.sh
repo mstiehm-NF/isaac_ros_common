@@ -1,5 +1,33 @@
 #!/bin/bash
 
+# Set the machine identification
+MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
+
+if [ -f "$MACHINE_CONFIG_PATH" ]; then
+    CONFIG_ROUTE=".desired.machine_config.identification"
+    MACHINE_ID=$(jq -r "$CONFIG_ROUTE.machine_id" $MACHINE_CONFIG_PATH)
+    ROS_DOMAIN_ID=$(jq -r "$CONFIG_ROUTE.ros_domain_id" $MACHINE_CONFIG_PATH)
+    ROS_NAMESPACE=$(jq -r "$CONFIG_ROUTE.ros_namespace" $MACHINE_CONFIG_PATH)
+else
+    echo "Error: $MACHINE_CONFIG_PATH does not exist."
+fi
+
+# if ros domain id is less than 232 and greater than 0 set it
+if [ "$ROS_DOMAIN_ID" != "null" ] && [ "$ROS_DOMAIN_ID" -lt "233" ] && [ "$ROS_DOMAIN_ID" -gt "-1" ]; then
+    export ROS_DOMAIN_ID=$ROS_DOMAIN_ID
+    echo "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" >> ~/.bashrc
+    echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
+else
+    echo "ROS_DOMAIN_ID is not set or out of range"
+fi
+
+if [ "$ROS_NAMESPACE" == "null" ]; then
+    echo "ROS_NAMESPACE is not set"
+else
+    export ROS_NAMESPACE=$ROS_NAMESPACE
+    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
+    echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
+fi
 
 #Get platform
 PLATFORM="$(uname -m)"
