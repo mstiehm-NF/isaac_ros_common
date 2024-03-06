@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAMESPACE=''
+export ROS_NAMESPACE='test'
 
 export ROS_DOMAIN_ID=0
 echo "export ROS_DOMAIN_ID=${ROS_DOMAIN_ID}" >> ~/.bashrc
@@ -125,14 +125,14 @@ export RUN_DEV=true
 #Install can if not already installed
 if [ -d "/sys/class/net/can0" ]; then
     echo "CAN Installed"
-    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=${NAMESPACE} &
+    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=${ROS_NAMESPACE} &
 else
     echo "CAN Controller is not configured on this device!" &
 fi
 
-ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r /image_raw:=/image  -r __ns:=/${NAMESPACE} &
+ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r /image_raw:=/image  -r __ns:=/${ROS_NAMESPACE} &
 
-ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${NAMESPACE} &
+ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${ROS_NAMESPACE} &
 
 # If VS Code is installed
 if [[ "$VSCODE" == true ]]; then
@@ -146,7 +146,7 @@ if [[ "$VSCODE" == true ]]; then
 fi
 
 # Start the applications
-ros2 run backend_ui_server server --ros-args -r __ns:=/${NAMESPACE}
+ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE}
 
 exit 0
 
