@@ -165,7 +165,15 @@ fi
 
 ros2 launch micro_ros_agent micro_ros_agent_launch.py &
 
-# Start the applications
-ros2 run backend_ui_server server
+_term() {
+    echo "Caught SIGTERM signal!!!"
+    kill -TERM "$child" 2>/dev/null
+}
+trap _term SIGTERM SIGINT
 
-$@
+# Start the applications
+ros2 run backend_ui_server server &
+
+# Task to catch the SIGTERM signal
+child=$! 
+wait "$child"
