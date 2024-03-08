@@ -19,15 +19,20 @@ if [ "$ROS_DOMAIN_ID" != "null" ] && [ "$ROS_DOMAIN_ID" -lt "233" ] && [ "$ROS_D
     echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
 else
     echo "ROS_DOMAIN_ID is not set or out of range"
+    ROS_DOMAIN_ID=0
 fi
 
 if [ "$ROS_NAMESPACE" == "null" ]; then
     echo "ROS_NAMESPACE is not set"
+    ROS_NAMESPACE=""
 else
     export ROS_NAMESPACE=$ROS_NAMESPACE
     echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
     echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
 fi
+
+# Start ROS namespace/domain CAN "heartbeat"
+python3 /usr/config/ros_config.py --ros_namespace "$ROS_NAMESPACE" --ros_domain_id "$ROS_DOMAIN_ID" &
 
 #Get platform
 PLATFORM="$(uname -m)"
