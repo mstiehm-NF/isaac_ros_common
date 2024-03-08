@@ -1,11 +1,5 @@
 #!/bin/bash
 
-<<<<<<< HEAD
-export ROS_NAMESPACE='test'
-
-export ROS_DOMAIN_ID=0
-echo "export ROS_DOMAIN_ID=${ROS_DOMAIN_ID}" >> ~/.bashrc
-=======
 # Set the machine identification
 MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
 
@@ -34,7 +28,6 @@ else
     echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
     echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
 fi
->>>>>>> EM-1110-ros-localhost-only
 
 #Get platform
 PLATFORM="$(uname -m)"
@@ -176,12 +169,6 @@ if [[ "$VSCODE" == true ]]; then
     code --disable-gpu
 fi
 
-<<<<<<< HEAD
-# Start the applications
-ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE}
-
-exit 0
-=======
 ros2 launch micro_ros_agent micro_ros_agent_launch.py &
 
 _term() {
@@ -192,7 +179,6 @@ trap _term SIGTERM SIGINT
 
 # Start the applications
 ros2 run backend_ui_server server &
->>>>>>> EM-1110-ros-localhost-only
 
 # Task to catch the SIGTERM signal
 child=$! 
