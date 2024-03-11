@@ -23,6 +23,9 @@ fi
 
 if [ "$ROS_NAMESPACE" == "null" ]; then
     echo "ROS_NAMESPACE is not set"
+    export ROS_NAMESPACE=''
+    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
+    echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
 else
     export ROS_NAMESPACE=$ROS_NAMESPACE
     echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
@@ -146,6 +149,17 @@ fi
 
 export RUN_DEV=true
 
+# If VS Code is installed
+if [[ "$VSCODE" == true ]]; then
+    code --install-extension ms-python.python --force --user-data-dir $HOME/.vscode/ 
+    code --install-extension codium.codium --force --user-data-dir $HOME/.vscode/
+    code --install-extension github.copilot --force --user-data-dir $HOME/.vscode/
+    code --install-extension ms-azuretools.vscode-docker --force --user-data-dir $HOME/.vscode/
+    code --install-extension github.vscode-pull-request-github --force --user-data-dir $HOME/.vscode/
+    code --install-extension eamodio.gitlens --force --user-data-dir $HOME/.vscode/
+    code --disable-gpu
+fi
+
 #Install can if not already installed
 if [ -d "/sys/class/net/can0" ]; then
     echo "CAN Installed"
@@ -158,19 +172,6 @@ ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r image_ra
 
 ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${ROS_NAMESPACE} &
 
-# If VS Code is installed
-if [[ "$VSCODE" == true ]]; then
-    code --install-extension ms-python.python --force --user-data-dir $HOME/.vscode/ 
-    code --install-extension codium.codium --force --user-data-dir $HOME/.vscode/
-    code --install-extension github.copilot --force --user-data-dir $HOME/.vscode/
-    code --install-extension ms-azuretools.vscode-docker --force --user-data-dir $HOME/.vscode/
-    code --install-extension github.vscode-pull-request-github --force --user-data-dir $HOME/.vscode/
-    code --install-extension eamodio.gitlens --force --user-data-dir $HOME/.vscode/
-    code --disable-gpu
-fi
-
-ros2 launch micro_ros_agent micro_ros_agent_launch.py &
-
 _term() {
     echo "Caught SIGTERM signal!!!"
     kill -TERM "$child" 2>/dev/null
@@ -178,7 +179,7 @@ _term() {
 trap _term SIGTERM SIGINT
 
 # Start the applications
-ros2 run backend_ui_server server &
+ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
 
 # Task to catch the SIGTERM signal
 child=$! 
