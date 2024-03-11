@@ -130,7 +130,7 @@ else
     echo "CAN Controller is not configured on this device!" &
 fi
 
-ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r /image_raw:=/image  -r __ns:=/${ROS_NAMESPACE} &
+ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r image_raw:=image  -r __ns:=/${ROS_NAMESPACE} &
 
 ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${ROS_NAMESPACE} &
 
