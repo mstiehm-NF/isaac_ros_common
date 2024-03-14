@@ -164,6 +164,12 @@ fi
 if [ -d "/sys/class/net/can0" ]; then
     echo "CAN Installed"
     ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=${ROS_NAMESPACE} &
+    #python3 /workspaces/isaac_ros-dev/src/backend_components/can_ros_nodes/can_ros_nodes/ros_setup_can_node.py &
+    ros2 run can_ros_nodes run_ros_setup &
+    
+    CAN_ROS_NODES_PID=$!
+    echo "CAN ROS Node PID: $CAN_ROS_NODES_PID" &
+    echo $(ps -o pgid= -p $CAN_ROS_NODES_PID) &
 else
     echo "CAN Controller is not configured on this device!" &
 fi
@@ -174,12 +180,15 @@ ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=${ROS_NAMESPACE
 
 _term() {
     echo "Caught SIGTERM signal!!!"
-    kill -TERM "$child" 2>/dev/null
+    kill -TERM -1
+    exit 0
 }
 trap _term SIGTERM SIGINT
 
 # Start the applications
 ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
+
+echo "Parent Process Group ID: $(ps -o pgid= -p $!)"
 
 # Task to catch the SIGTERM signal
 child=$! 
