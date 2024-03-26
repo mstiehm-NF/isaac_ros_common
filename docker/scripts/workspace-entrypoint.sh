@@ -104,12 +104,11 @@ colcon build  --continue-on-error --packages-select \
     realsense2_camera \
     realsense2_camera_msgs \
     realsense2_description \
-    realsense_splitter \
     odometry_flattener \
 
 
     # Skip these packages for now
-
+    # realsense_splitter \
     # isaac_ros_apriltag_interfaces \
     # isaac_ros_nitros_april_tag_detection_array_type \
     # isaac_ros_nitros_battery_state_type \
