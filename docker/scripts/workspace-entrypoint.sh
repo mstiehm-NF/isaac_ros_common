@@ -32,8 +32,11 @@ else
     echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
 fi
 
-#Get platform
+# Get platform
 PLATFORM="$(uname -m)"
+
+# Make sure the user has the correct permissions
+sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 
 # Build ROS dependencyS
 
@@ -45,7 +48,8 @@ source /opt/ros/${ROS_DISTRO}/setup.bash
 
 sudo service udev restart
 
-colcon build  --continue-on-error --packages-select \
+colcon build \
+    --continue-on-error --packages-select \
     backend_msgs \
     backend_ui_server \
     can_ros_nodes \
@@ -113,7 +117,6 @@ colcon build  --continue-on-error --packages-select \
     realsense_splitter \
     semantic_label_conversion \
     serial_ros_nodes \
-    xacro \
 
 
     # Skip these packages for now
