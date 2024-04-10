@@ -190,7 +190,7 @@ trap _term SIGTERM SIGINT
 if [ "$RUN_ROS_MMC_SIM" == "true" ]; then
     echo "Starting ROS MMC Simulator"
     ros2 launch mmcrossimulator mmcrossimulator_launch.py namespace:=/${ROS_NAMESPACE} &
-    ros2 run ros_module_simulator run_ui_button_sim &
+    ros2 run ros_module_simulator run_ui_button_sim --ros-args -r __ns:=/${ROS_NAMESPACE} &
 fi
 
 # Start the applications
