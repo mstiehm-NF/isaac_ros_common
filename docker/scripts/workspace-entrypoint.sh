@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Enable/disable the ROS Message Simulation
-# export RUN_ROS_MMC_SIM=true
+export RUN_ROS_MMC_SIM=true
 
 # Set the machine identification
 MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
@@ -142,8 +142,7 @@ colcon build \
 
 if [ "$RUN_ROS_MMC_SIM" == "true" ]; then
     colcon build --continue-on-error --packages-select \
-        mmcrossimulator \
-        ros_module_simulator
+        mli_ros_simulator
 fi
 
 echo "source /workspaces/isaac_ros-dev/install/setup.bash" >> ~/.bashrc
@@ -200,8 +199,8 @@ trap _term SIGTERM SIGINT
 
 if [ "$RUN_ROS_MMC_SIM" == "true" ]; then
     echo "Starting ROS MMC Simulator"
-    ros2 launch mmcrossimulator mmcrossimulator_launch.py namespace:=/${ROS_NAMESPACE} &
-    ros2 run ros_module_simulator run_ui_button_sim --ros-args -r __ns:=/${ROS_NAMESPACE} &
+    ros2 launch mli_ros_simulator mli_ros_simulator_launch.py namespace:=/${ROS_NAMESPACE} &
+    ros2 run mli_ros_simulator run_ui_button_sim --ros-args -r __ns:=/${ROS_NAMESPACE} &
 fi
 
 # Start the applications
