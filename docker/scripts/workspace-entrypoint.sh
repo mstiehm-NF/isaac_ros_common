@@ -118,6 +118,7 @@ colcon build \
     semantic_label_conversion \
     serial_ros_nodes \
     mli_ros_simulator \
+    ros_simulator_web_app \
 
     # Skip these packages for now
     # isaac_ros_apriltag_interfaces \

@@ -79,6 +79,7 @@ colcon build  --packages-select \
     serial_ros_nodes \
     xacro \
     mli_ros_simulator \
+    ros_simulator_web_app \
 
     # Skip these packages for now
     # isaac_ros_apriltag_interfaces \
