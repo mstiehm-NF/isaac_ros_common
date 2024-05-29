@@ -165,7 +165,7 @@ fi
 # Install can if not already installed
 if [ -d "/sys/class/net/can0" ]; then
     echo "CAN Installed"
-    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=${ROS_NAMESPACE} &
+    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
     ros2 run can_ros_nodes run_ros_setup &
 else
     echo "CAN Controller is not configured on this device!" &
@@ -174,7 +174,7 @@ fi
 # Start serial ROS node if serial port is available
 if [ -f "/dev/ttyWCH1" ]; then
     echo "Starting serial ROS node"
-    ros2 launch serial_ros_nodes serial_ros_nodes_launch.py namespace:=${ROS_NAMESPACE} &
+    ros2 launch serial_ros_nodes serial_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
 else
     echo "Serial port is not available" &
 fi
