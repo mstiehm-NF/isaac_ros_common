@@ -6,7 +6,6 @@ MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
 
 if [ -f "$MACHINE_CONFIG_PATH" ]; then
     CONFIG_ROUTE=".desired.machine_config.identification"
-    CONFIG_ROUTE2=".desired.machine_config.camera_config"
     MACHINE_ID=$(jq -r "$CONFIG_ROUTE.machine_id" $MACHINE_CONFIG_PATH)
     ROS_DOMAIN_ID=$(jq -r "$CONFIG_ROUTE.ros_domain_id" $MACHINE_CONFIG_PATH)
     ROS_NAMESPACE=$(jq -r "$CONFIG_ROUTE.ros_namespace" $MACHINE_CONFIG_PATH)
