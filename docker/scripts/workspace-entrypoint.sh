@@ -193,7 +193,7 @@ fi
 if [ "$FRONT_CAMERA" = true ]; then
     # Start the front camera
     echo "Starting front camera..."
-    ros2 run image_publisher image_publisher_node /"$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
+    ros2 run image_publisher image_publisher_node "$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
 else
     echo "Front Camera is not configured on this device!"
 fi
@@ -201,7 +201,7 @@ fi
 if [ "$REAR_CAMERA" = true ]; then
     # Start the rear camera
     echo "Starting rear camera..."
-    ros2 run image_publisher image_publisher_node /"$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera&
+    ros2 run image_publisher image_publisher_node "$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera&
 else
     echo "Rear Camera is not configured on this device!"
 fi
