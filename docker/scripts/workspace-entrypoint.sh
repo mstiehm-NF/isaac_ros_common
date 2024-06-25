@@ -3,11 +3,18 @@
 # Set the machine identification
 MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
 
+
 if [ -f "$MACHINE_CONFIG_PATH" ]; then
     CONFIG_ROUTE=".desired.machine_config.identification"
     MACHINE_ID=$(jq -r "$CONFIG_ROUTE.machine_id" $MACHINE_CONFIG_PATH)
     ROS_DOMAIN_ID=$(jq -r "$CONFIG_ROUTE.ros_domain_id" $MACHINE_CONFIG_PATH)
     ROS_NAMESPACE=$(jq -r "$CONFIG_ROUTE.ros_namespace" $MACHINE_CONFIG_PATH)
+    FRONT_CAMERA=$(jq -r '.desired.machine_config.camera_config.front_camera.enabled' $MACHINE_CONFIG_PATH)
+    REAR_CAMERA=$(jq -r '.desired.machine_config.camera_config.rear_camera.enabled' $MACHINE_CONFIG_PATH)
+    TOPIC_NAME=$(jq -r '.desired.machine_config.camera_config.color_image_topic' $MACHINE_CONFIG_PATH)
+    FRONT_CAMERA_DEVICE=$(jq -r '.desired.machine_config.camera_config.front_camera.device_binding' $MACHINE_CONFIG_PATH)
+    REAR_CAMERA_DEVICE=$(jq -r '.desired.machine_config.camera_config.rear_camera.device_binding' $MACHINE_CONFIG_PATH)
+
 else
     echo "Error: $MACHINE_CONFIG_PATH does not exist."
 fi
@@ -18,7 +25,10 @@ if [ "$ROS_DOMAIN_ID" != "null" ] && [ "$ROS_DOMAIN_ID" -lt "233" ] && [ "$ROS_D
     echo "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" >> ~/.bashrc
     echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
 else
+    export ROS_DOMAIN_ID=0
     echo "ROS_DOMAIN_ID is not set or out of range"
+    echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
+    echo "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" >> ~/.bashrc
 fi
 
 if [ "$ROS_NAMESPACE" == "null" ]; then
@@ -28,8 +38,8 @@ if [ "$ROS_NAMESPACE" == "null" ]; then
     echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
 else
     export ROS_NAMESPACE=$ROS_NAMESPACE
-    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
     echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
+    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
 fi
 
 # Get platform
@@ -179,7 +189,23 @@ else
     echo "Serial port is not available" &
 fi
 
-ros2 run image_publisher image_publisher_node /dev/video2 --ros-args -r image_raw:=image  -r __ns:=/${ROS_NAMESPACE} &
+# Starting the cameras
+if [ "$FRONT_CAMERA" = true ]; then
+    # Start the front camera
+    echo "Starting front camera..."
+    ros2 run image_publisher image_publisher_node "$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
+else
+    echo "Front Camera is not configured on this device!"
+fi
+
+if [ "$REAR_CAMERA" = true ]; then
+    # Start the rear camera
+    echo "Starting rear camera..."
+    ros2 run image_publisher image_publisher_node "$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera&
+else
+    echo "Rear Camera is not configured on this device!"
+fi
+
 
 ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=/${ROS_NAMESPACE} &
 
@@ -196,3 +222,4 @@ ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
 # Task to catch the SIGTERM signal
 child=$! 
 wait "$child"
+
