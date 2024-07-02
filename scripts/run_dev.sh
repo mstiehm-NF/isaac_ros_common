@@ -218,7 +218,7 @@ docker run -it --rm \
     -v /usr/data:/usr/data \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
-    --runtime nvidia \
+    --gpus all \
     --user="admin" \
     --workdir /workspaces/isaac_ros-dev \
     $@ \

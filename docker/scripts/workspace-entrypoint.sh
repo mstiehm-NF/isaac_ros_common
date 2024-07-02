@@ -172,39 +172,39 @@ if [[ "$VSCODE" == true ]]; then
     code --disable-gpu
 fi
 
-# Install can if not already installed
-if [ -d "/sys/class/net/can0" ]; then
-    echo "CAN Installed"
-    ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
-    ros2 run can_ros_nodes run_ros_setup &
-else
-    echo "CAN Controller is not configured on this device!" &
-fi
+# # Install can if not already installed
+# if [ -d "/sys/class/net/can0" ]; then
+#     echo "CAN Installed"
+#     ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
+#     ros2 run can_ros_nodes run_ros_setup &
+# else
+#     echo "CAN Controller is not configured on this device!" &
+# fi
 
-# Start serial ROS node if serial port is available
-if [ -e "/dev/ttyWCH0" -a -e "/dev/ttyWCH1" ]; then
-    echo "Starting serial ROS node"
-    ros2 launch serial_ros_nodes serial_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
-else
-    echo "Serial port is not available" &
-fi
+# # Start serial ROS node if serial port is available
+# if [ -e "/dev/ttyWCH0" -a -e "/dev/ttyWCH1" ]; then
+#     echo "Starting serial ROS node"
+#     ros2 launch serial_ros_nodes serial_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
+# else
+#     echo "Serial port is not available" &
+# fi
 
-# Starting the cameras
-if [ "$FRONT_CAMERA" = true ]; then
-    # Start the front camera
-    echo "Starting front camera..."
-    ros2 run image_publisher image_publisher_node "$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
-else
-    echo "Front Camera is not configured on this device!"
-fi
+# # Starting the cameras
+# if [ "$FRONT_CAMERA" = true ]; then
+#     # Start the front camera
+#     echo "Starting front camera..."
+#     ros2 run image_publisher image_publisher_node "$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
+# else
+#     echo "Front Camera is not configured on this device!"
+# fi
 
-if [ "$REAR_CAMERA" = true ]; then
-    # Start the rear camera
-    echo "Starting rear camera..."
-    ros2 run image_publisher image_publisher_node "$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera&
-else
-    echo "Rear Camera is not configured on this device!"
-fi
+# if [ "$REAR_CAMERA" = true ]; then
+#     # Start the rear camera
+#     echo "Starting rear camera..."
+#     ros2 run image_publisher image_publisher_node "$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera &
+# else
+#     echo "Rear Camera is not configured on this device!"
+# fi
 
 
 ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=/${ROS_NAMESPACE} &
