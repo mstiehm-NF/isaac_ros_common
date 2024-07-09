@@ -11,6 +11,8 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+RUN echo "Building Realsense Docker layer"
+
 COPY scripts/build-librealsense.sh /opt/realsense/build-librealsense.sh
 COPY scripts/install-realsense-dependencies.sh /opt/realsense/install-realsense-dependencies.sh
 
