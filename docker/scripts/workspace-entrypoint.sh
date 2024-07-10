@@ -9,12 +9,6 @@ if [ -f "$MACHINE_CONFIG_PATH" ]; then
     MACHINE_ID=$(jq -r "$CONFIG_ROUTE.machine_id" $MACHINE_CONFIG_PATH)
     ROS_DOMAIN_ID=$(jq -r "$CONFIG_ROUTE.ros_domain_id" $MACHINE_CONFIG_PATH)
     ROS_NAMESPACE=$(jq -r "$CONFIG_ROUTE.ros_namespace" $MACHINE_CONFIG_PATH)
-    FRONT_CAMERA=$(jq -r '.desired.machine_config.camera_config.front_camera.enabled' $MACHINE_CONFIG_PATH)
-    REAR_CAMERA=$(jq -r '.desired.machine_config.camera_config.rear_camera.enabled' $MACHINE_CONFIG_PATH)
-    TOPIC_NAME=$(jq -r '.desired.machine_config.camera_config.color_image_topic' $MACHINE_CONFIG_PATH)
-    FRONT_CAMERA_DEVICE=$(jq -r '.desired.machine_config.camera_config.front_camera.device_binding' $MACHINE_CONFIG_PATH)
-    REAR_CAMERA_DEVICE=$(jq -r '.desired.machine_config.camera_config.rear_camera.device_binding' $MACHINE_CONFIG_PATH)
-
 else
     echo "Error: $MACHINE_CONFIG_PATH does not exist."
 fi
@@ -48,14 +42,11 @@ PLATFORM="$(uname -m)"
 # Make sure the user has the correct permissions
 sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 
-# Build ROS dependencyS
-
+# Source ROS2
+source /opt/ros/${ROS_DISTRO}/setup.bash
 echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
-source /opt/ros/${ROS_DISTRO}/setup.bash
-
 # Restart udev daemon
-
 sudo service udev restart
 
 colcon build \
@@ -172,43 +163,6 @@ if [[ "$VSCODE" == true ]]; then
     code --disable-gpu
 fi
 
-# # Install can if not already installed
-# if [ -d "/sys/class/net/can0" ]; then
-#     echo "CAN Installed"
-#     ros2 launch can_ros_nodes can_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
-#     ros2 run can_ros_nodes run_ros_setup &
-# else
-#     echo "CAN Controller is not configured on this device!" &
-# fi
-
-# # Start serial ROS node if serial port is available
-# if [ -e "/dev/ttyWCH0" -a -e "/dev/ttyWCH1" ]; then
-#     echo "Starting serial ROS node"
-#     ros2 launch serial_ros_nodes serial_ros_nodes_launch.py namespace:=/${ROS_NAMESPACE} &
-# else
-#     echo "Serial port is not available" &
-# fi
-
-# # Starting the cameras
-# if [ "$FRONT_CAMERA" = true ]; then
-#     # Start the front camera
-#     echo "Starting front camera..."
-#     ros2 run image_publisher image_publisher_node "$FRONT_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=front_camera &
-# else
-#     echo "Front Camera is not configured on this device!"
-# fi
-
-# if [ "$REAR_CAMERA" = true ]; then
-#     # Start the rear camera
-#     echo "Starting rear camera..."
-#     ros2 run image_publisher image_publisher_node "$REAR_CAMERA_DEVICE" --ros-args -r image_raw:="$TOPIC_NAME" -r __ns:=/${ROS_NAMESPACE} -p frame_id:=rear_camera &
-# else
-#     echo "Rear Camera is not configured on this device!"
-# fi
-
-
-ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=/${ROS_NAMESPACE} &
-
 _term() {
     echo "Caught SIGTERM signal!!!"
     kill -TERM -1
@@ -217,6 +171,7 @@ _term() {
 trap _term SIGTERM SIGINT
 
 # Start the applications
+ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=/${ROS_NAMESPACE} &
 ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
 
 # Task to catch the SIGTERM signal
