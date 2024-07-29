@@ -145,6 +145,7 @@ source /workspaces/isaac_ros-dev/install/setup.bash
 # Setup before starting BE server
 sudo chown 1000:1000 /usr/config/
 sudo chown 1000:1000 /usr/data/
+sudo chown 1000:1000 /usr/certs/
 
 if [[ "$PLATFORM" == "aarch64" ]]; then
     pip3 install typing-extensions --upgrade
