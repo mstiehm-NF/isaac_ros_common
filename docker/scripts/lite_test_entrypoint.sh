@@ -110,7 +110,7 @@ echo Starting Tests...
 # -vs to show logs
 pytest -v --disable-warnings \
     /workspaces/isaac_ros-dev/src/backend_components/backend_ui_server/backend_ui_server/tests/ \
-    /workspaces/isaac_ros-dev/src/configurator/tests/ \
+    /workspaces/isaac_ros-dev/src/azure_iot/configurator/tests/ \
     --junitxml=/workspaces/isaac_ros-dev/test_results/test-result.xml \
     --cov=. \
     --cov-report xml:/workspaces/isaac_ros-dev/test_results/coverage-result.xml
