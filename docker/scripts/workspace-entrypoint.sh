@@ -171,8 +171,7 @@ _term() {
 }
 trap _term SIGTERM SIGINT
 
-# Start the applications
-ros2 launch micro_ros_agent micro_ros_agent_launch.py namespace:=/${ROS_NAMESPACE} &
+# Start the application
 ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
 
 # Task to catch the SIGTERM signal
