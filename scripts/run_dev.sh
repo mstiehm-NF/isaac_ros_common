@@ -154,8 +154,6 @@ fi
 # Map host's display socket to docker
 DOCKER_ARGS+=("-v /tmp/.X11-unix:/tmp/.X11-unix")
 DOCKER_ARGS+=("-v $HOME/.Xauthority:/home/admin/.Xauthority:rw")
-DOCKER_ARGS+=("-v $HOME/workspaces/isaac_ros-dev/jetsondevelopment/src/backend_components/backend_ui_server/backend_ui_server/database/migrations:/workspaces/isaac_ros-dev/install/backend_ui_server/share/backend_ui_server/migrations")
-DOCKER_ARGS+=("-v $HOME/workspaces/isaac_ros-dev/jetsondevelopment/src/backend_components/backend_ui_server/resource/fault:/workspaces/isaac_ros-dev/install/backend_ui_server/share/backend_ui_server/fault")
 DOCKER_ARGS+=("-e DISPLAY")
 DOCKER_ARGS+=("-e NVIDIA_VISIBLE_DEVICES=all")
 DOCKER_ARGS+=("-e NVIDIA_DRIVER_CAPABILITIES=all")
@@ -221,6 +219,7 @@ docker run -it --rm \
     -v /etc/localtime:/etc/localtime:ro \
     -v /usr/config:/usr/config \
     -v /usr/data:/usr/data \
+    -v /usr/certs:/usr/certs \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
     --runtime="nvidia" \
