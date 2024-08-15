@@ -205,6 +205,10 @@ if [[ -z "$RUN_TESTS" ]]; then
     DOCKER_ARGS+=("--entrypoint /usr/local/bin/scripts/test_entrypoint.sh")
 fi
 
+
+# Add the device /dev/video2 to the Docker arguments
+DOCKER_ARGS+=("--device /dev/video2")
+
 # Run container from image
 print_info "Running $CONTAINER_NAME"
 docker run -it --rm \
@@ -213,6 +217,7 @@ docker run -it --rm \
     ${DOCKER_ARGS[@]} \
     -v $ISAAC_ROS_DEV_DIR:/workspaces/isaac_ros-dev \
     -v /dev/:/dev/ \
+    -v /run/user/1000:/run/user/1000 \
     -v /etc/localtime:/etc/localtime:ro \
     -v /usr/config:/usr/config \
     -v /usr/data:/usr/data \
