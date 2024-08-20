@@ -42,7 +42,6 @@ RUN echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && adduser ${USERNAME} video && adduser ${USERNAME} plugdev && adduser ${USERNAME} sudo
 
 # Copy scripts
-RUN echo "Copying scripts"
 RUN mkdir -p /usr/local/bin/scripts
 COPY scripts/*entrypoint.sh /usr/local/bin/scripts/
 RUN  chmod +x /usr/local/bin/scripts/*.sh
