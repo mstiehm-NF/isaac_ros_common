@@ -18,6 +18,7 @@ colcon build --packages-select \
     map_saver_2d \
     mli_ros_simulator \
     ros_simulator_web_app \
+    drive_system_odometry \
     
     # Skip these packages for now
     # custom_nitros_image \
