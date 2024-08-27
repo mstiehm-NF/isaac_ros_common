@@ -49,6 +49,9 @@ RUN  chmod +x /usr/local/bin/scripts/*.sh
 # Copy middleware profiles
 RUN mkdir -p /usr/local/share/middleware_profiles
 COPY middleware_profiles/*profile.xml /usr/local/share/middleware_profiles/
+COPY files/Bundled_MMC_FWU_1.nsm /usr/update/
+COPY files/versions.json /usr/update/
+COPY files/App-Ledstrip.nss /usr/update/
 
 #Add gpio if running on aarch64
 RUN if [[ "$ARCH" =~ .*"x86".* ]]; \
