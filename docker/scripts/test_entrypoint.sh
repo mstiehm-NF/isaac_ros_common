@@ -79,7 +79,6 @@ colcon build  --packages-select \
     serial_ros_nodes \
     mli_ros_simulator \
     ros_simulator_web_app \
-    gxf_isaac_fiducials \
     isaac_ros_nitros_april_tag_detection_array_type \
     isaac_ros_apriltag \
     isaac_ros_apriltag_interfaces \
