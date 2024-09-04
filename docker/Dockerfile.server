@@ -1,9 +1,9 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-RUN apt-get update && apt-get install -y network-manager jq \
+RUN apt-get update && apt-get install -y network-manager jq python3-pcl\
     && systemctl mask NetworkManager.service \
     && apt-get clean
 
 #install deps
-RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen
+RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d

@@ -120,7 +120,13 @@ colcon build \
     serial_ros_nodes \
     mli_ros_simulator \
     ros_simulator_web_app \
-
+    isaac_ros_nitros_april_tag_detection_array_type \
+    isaac_ros_apriltag \
+    isaac_ros_apriltag_interfaces \
+    camera_pose_calibration \
+     
+    # isaac_ros_apriltag_interfaces \
+    # isaac_ros_apriltag \ 
     # Skip these packages for now
     # isaac_ros_apriltag_interfaces \
     # isaac_ros_nitros_april_tag_detection_array_type \
