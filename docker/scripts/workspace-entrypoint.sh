@@ -56,6 +56,7 @@ colcon build \
     can_ros_nodes \
     custom_nitros_image \
     custom_nitros_string \
+    drive_system_odometry \
     isaac_ros_bi3d_interfaces \
     isaac_ros_common \
     isaac_ros_depth_image_proc \
