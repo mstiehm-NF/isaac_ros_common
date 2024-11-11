@@ -30,7 +30,6 @@ colcon build  --packages-select \
     isaac_ros_managed_nitros \
     isaac_ros_nitros \
     isaac_ros_nitros_april_tag_detection_array_type \
-    isaac_ros_nitros_battery_state_type \
     isaac_ros_nitros_bridge_interfaces \
     isaac_ros_nitros_camera_info_type \
     isaac_ros_nitros_compressed_image_type \
@@ -91,14 +90,8 @@ colcon build  --packages-select \
     serial_ros_nodes \
 
     # Skip these packages for now
-    # isaac_ros_apriltag_interfaces \
-    # isaac_ros_nitros_april_tag_detection_array_type \
-    # isaac_ros_nitros_battery_state_type \
-    # isaac_ros_nitros_correlated_timestamp_type \
-    # isaac_ros_nitros_encoder_ticks_type \
-    # isaac_ros_nitros_flat_scan_type \
-    # isaac_ros_nitros_twist_type \
     # isaac_ros_nova_interfaces \
+    # isaac_ros_nitros_battery_state_type \
     # network_performance_measurement \
     # depthai_bridge \
     # depthai_descriptions \

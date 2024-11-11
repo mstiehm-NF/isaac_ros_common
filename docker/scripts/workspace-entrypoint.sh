@@ -53,10 +53,13 @@ colcon build \
     --continue-on-error --packages-select \
     backend_msgs \
     backend_ui_server \
+    camera_pose_calibration \
     can_ros_nodes \
     custom_nitros_image \
     custom_nitros_string \
     drive_system_odometry \
+    isaac_ros_apriltag \
+    isaac_ros_apriltag_interfaces \
     isaac_ros_bi3d_interfaces \
     isaac_ros_common \
     isaac_ros_depth_image_proc \
@@ -67,12 +70,16 @@ colcon build \
     isaac_ros_image_proc \
     isaac_ros_managed_nitros \
     isaac_ros_nitros \
+    isaac_ros_nitros_april_tag_detection_array_type \
     isaac_ros_nitros_bridge_interfaces \
     isaac_ros_nitros_camera_info_type \
     isaac_ros_nitros_compressed_image_type \
+    isaac_ros_nitros_correlated_timestamp_type \
     isaac_ros_nitros_detection2_d_array_type \
     isaac_ros_nitros_detection3_d_array_type \
     isaac_ros_nitros_disparity_image_type \
+    isaac_ros_nitros_encoder_ticks_type \
+    isaac_ros_nitros_flat_scan_type \
     isaac_ros_nitros_imu_type \
     isaac_ros_nitros_image_type \
     isaac_ros_nitros_interfaces \
@@ -83,6 +90,7 @@ colcon build \
     isaac_ros_nitros_pose_cov_stamped_type \
     isaac_ros_nitros_std_msg_type \
     isaac_ros_nitros_tensor_list_type \
+    isaac_ros_nitros_twist_type \
     isaac_ros_nvblox \
     isaac_ros_pointcloud_interfaces \
     isaac_ros_stereo_image_proc \
@@ -100,6 +108,7 @@ colcon build \
     micro_ros_msgs \
     microxrcedds_client \
     mmc_ui_msgs \
+    mli_ros_simulator \
     nvblox \
     nvblox_cpu_gpu_tools \
     nvblox_examples_bringup \
@@ -117,25 +126,11 @@ colcon build \
     realsense2_camera_msgs \
     realsense2_description \
     realsense_splitter \
+    ros_simulator_web_app \
     semantic_label_conversion \
     serial_ros_nodes \
-    mli_ros_simulator \
-    ros_simulator_web_app \
-    isaac_ros_nitros_april_tag_detection_array_type \
-    isaac_ros_apriltag \
-    isaac_ros_apriltag_interfaces \
-    camera_pose_calibration \
      
-    # isaac_ros_apriltag_interfaces \
-    # isaac_ros_apriltag \ 
-    # Skip these packages for now
-    # isaac_ros_apriltag_interfaces \
-    # isaac_ros_nitros_april_tag_detection_array_type \
     # isaac_ros_nitros_battery_state_type \
-    # isaac_ros_nitros_correlated_timestamp_type \
-    # isaac_ros_nitros_encoder_ticks_type \
-    # isaac_ros_nitros_flat_scan_type \
-    # isaac_ros_nitros_twist_type \
     # isaac_ros_nova_interfaces \
     # network_performance_measurement \
     # depthai_bridge \
