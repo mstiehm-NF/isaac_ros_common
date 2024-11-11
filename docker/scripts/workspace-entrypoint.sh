@@ -74,7 +74,6 @@ colcon build \
     isaac_ros_nitros_bridge_interfaces \
     isaac_ros_nitros_camera_info_type \
     isaac_ros_nitros_compressed_image_type \
-    isaac_ros_nitros_correlated_timestamp_type \
     isaac_ros_nitros_detection2_d_array_type \
     isaac_ros_nitros_detection3_d_array_type \
     isaac_ros_nitros_disparity_image_type \
@@ -131,6 +130,7 @@ colcon build \
     serial_ros_nodes \
      
     # isaac_ros_nitros_battery_state_type \
+    # isaac_ros_nitros_correlated_timestamp_type \
     # isaac_ros_nova_interfaces \
     # network_performance_measurement \
     # depthai_bridge \
