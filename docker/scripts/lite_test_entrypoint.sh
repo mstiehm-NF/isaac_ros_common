@@ -14,9 +14,6 @@ colcon build --packages-select \
     can_ros_nodes \
     mmc_ui_msgs \
     serial_ros_nodes \
-    isaac_slam_saver \
-    isaac_ros_visual_slam_interfaces \
-    map_saver_2d \
     mli_ros_simulator \
     ros_simulator_web_app \
     
