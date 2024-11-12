@@ -77,7 +77,6 @@ colcon build \
     isaac_ros_nitros_detection2_d_array_type \
     isaac_ros_nitros_detection3_d_array_type \
     isaac_ros_nitros_disparity_image_type \
-    isaac_ros_nitros_encoder_ticks_type \
     isaac_ros_nitros_flat_scan_type \
     isaac_ros_nitros_imu_type \
     isaac_ros_nitros_image_type \
@@ -131,6 +130,7 @@ colcon build \
      
     # isaac_ros_nitros_battery_state_type \
     # isaac_ros_nitros_correlated_timestamp_type \
+    # isaac_ros_nitros_encoder_ticks_type \
     # isaac_ros_nova_interfaces \
     # network_performance_measurement \
     # depthai_bridge \
