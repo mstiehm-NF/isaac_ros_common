@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the machine identification
-MACHINE_CONFIG_PATH="/usr/config/good_machine_config.json"
+MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
 
 
 if [ -f "$MACHINE_CONFIG_PATH" ]; then
