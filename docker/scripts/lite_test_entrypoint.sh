@@ -11,7 +11,14 @@ sudo cp /workspaces/isaac_ros-dev/src/isaac_ros_common/docker/patches/hooks.py /
 colcon build --packages-select \
     backend_msgs \
     backend_ui_server \
+    camera_pose_calibration \
     can_ros_nodes \
+    drive_system_odometry \
+    map_saver_2d \
+    microcdr \
+    micro_ros_agent \
+    micro_ros_msgs \
+    microxrcedds_client \
     mmc_ui_msgs \
     serial_ros_nodes \
     mli_ros_simulator \
