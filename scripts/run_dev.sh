@@ -178,6 +178,7 @@ if [[ $PLATFORM == "aarch64" ]]; then
     DOCKER_ARGS+=("--pid=host")
     DOCKER_ARGS+=("-v /opt/nvidia/vpi2:/opt/nvidia/vpi2")
     DOCKER_ARGS+=("-v /usr/share/vpi2:/usr/share/vpi2")
+    DOCKER_ARGS+=("--cap-add=SYS_NICE")
 
     # If jtop present, give the container access
     if [[ $(getent group jtop) ]]; then
