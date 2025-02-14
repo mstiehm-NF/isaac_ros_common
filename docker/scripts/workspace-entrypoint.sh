@@ -42,6 +42,19 @@ PLATFORM="$(uname -m)"
 # Make sure the user has the correct permissions
 sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 
+#add nice capabilities to python3.8
+sudo setcap cap_sys_nice+ep /usr/bin/python3.8
+
+echo "/opt/ros/$ROS_DISTRO/lib" | sudo tee /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
+# Find all lib directories under your workspace install and write them to a temporary file.
+find /workspaces/isaac_ros-dev/install -type d -name lib > /tmp/isaac_ros_install_libs.conf
+
+# Move the temporary file to /etc/ld.so.conf.d/ (using sudo to have proper permissions)
+sudo mv /tmp/isaac_ros_install_libs.conf /etc/ld.so.conf.d/isaac_ros_install_libs.conf
+
+# Update the dynamic linker cache
+sudo ldconfig
+
 # Source ROS2
 source /opt/ros/${ROS_DISTRO}/setup.bash
 echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
