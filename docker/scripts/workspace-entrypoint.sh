@@ -45,12 +45,17 @@ sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 #add nice capabilities to python3.8
 sudo setcap cap_sys_nice+ep /usr/bin/python3.8
 
+# Create ROS 2 library config file
 echo "/opt/ros/$ROS_DISTRO/lib" | sudo tee /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
-# Find all lib directories under your workspace install and write them to a temporary file.
-find /workspaces/isaac_ros-dev/install -type d -name lib > /tmp/isaac_ros_install_libs.conf
+echo "/opt/ros/$ROS_DISTRO/lib/x86_64-linux-gnu/" | sudo tee -a /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
+echo "/opt/ros/$ROS_DISTRO/opt/rviz_ogre_vendor/lib" | sudo tee -a /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
 
-# Move the temporary file to /etc/ld.so.conf.d/ (using sudo to have proper permissions)
-sudo mv /tmp/isaac_ros_install_libs.conf /etc/ld.so.conf.d/isaac_ros_install_libs.conf
+# Create NVIDIA library config file
+echo "/usr/local/cuda/compat/lib" | sudo tee /etc/ld.so.conf.d/nvidia_libs.conf
+echo "/usr/local/nvidia/lib" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
+echo "/usr/local/nvidia/lib64" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
+echo "/opt/tritonserver/backends/onnxruntime" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
+echo "/opt/tritonserver/lib" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
 
 # Update the dynamic linker cache
 sudo ldconfig
@@ -156,6 +161,15 @@ colcon build \
 
 echo "source /workspaces/isaac_ros-dev/install/setup.bash" >> ~/.bashrc
 source /workspaces/isaac_ros-dev/install/setup.bash
+
+# Find all lib directories under your workspace install and write them to a temporary file.
+find /workspaces/isaac_ros-dev/install -type d -name lib > /tmp/isaac_ros_install_libs.conf
+
+# Move the temporary file to /etc/ld.so.conf.d/ (using sudo to have proper permissions)
+sudo mv /tmp/isaac_ros_install_libs.conf /etc/ld.so.conf.d/isaac_ros_install_libs.conf
+
+# Update the dynamic linker cache
+sudo ldconfig
 
 # Setup before starting BE server
 sudo chown 1000:1000 /usr/config/
