@@ -1,0 +1,242 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-2e1a4e7eab0e890fc951.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18
+					]
+				},
+				{
+					"build" : "isaac_ros_nitros_bridge_interfaces__py",
+					"jsonFile" : "directory-isaac_ros_nitros_bridge_interfaces__py-Release-13315f2c3bc36430b87c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/workspaces/isaac_ros-dev/build/isaac_ros_nitros_bridge_interfaces/isaac_ros_nitros_bridge_interfaces__py",
+					"targetIndexes" : 
+					[
+						5
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "isaac_ros_nitros_bridge_interfaces",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_isaac_ros_nitros_bridge_interfaces_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_isaac_ros_nitros_bridge_interfaces_egg-Release-ebc16daa36f10de933a0.json",
+					"name" : "ament_cmake_python_build_isaac_ros_nitros_bridge_interfaces_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_copy_isaac_ros_nitros_bridge_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_copy_isaac_ros_nitros_bridge_interfaces-Release-3e9cdf243125662a2611.json",
+					"name" : "ament_cmake_python_copy_isaac_ros_nitros_bridge_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "generate_version_info_target_isaac_ros_nitros_bridge_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-generate_version_info_target_isaac_ros_nitros_bridge_interfaces-Release-59dbe39ea2a15120f4a4.json",
+					"name" : "generate_version_info_target_isaac_ros_nitros_bridge_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces-Release-3feda71a2d9f71eb2635.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__cpp-Release-d386f665347c0bbea379.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "isaac_ros_nitros_bridge_interfaces__py::@21dae4f67be213cd3bc7",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__py-Release-d70b5a241c6e84e4ac92.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_generator_c-Release-ae2cd4fbb62728bf1735.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_generator_py-Release-5378b4a2282925565a7f.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c-Release-56822400040e015e1441.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c__pyext-Release-7b2f7c957fe1b2e2c715.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_cpp-Release-7a8e9a59e54f4779a44c.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c-Release-65817384843be2742de4.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c__pyext-Release-a4eac845d88bab6c1172.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_cpp-Release-6aa76c364c8acc0941b3.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c-Release-ab81efe26d565edbc80b.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c__pyext-Release-c65b71c1efea342770b7.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_cpp-Release-95613891c8b500221a07.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "isaac_ros_nitros_bridge_interfaces_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-isaac_ros_nitros_bridge_interfaces_uninstall-Release-4bf931ed981988738aab.json",
+					"name" : "isaac_ros_nitros_bridge_interfaces_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-Release-8f22f3d14e44f1d9828c.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/workspaces/isaac_ros-dev/build/isaac_ros_nitros_bridge_interfaces",
+		"source" : "/workspaces/isaac_ros-dev/isaac_ros_nitros_bridge_interfaces"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

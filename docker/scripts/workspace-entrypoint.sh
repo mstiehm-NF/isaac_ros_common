@@ -1,5 +1,51 @@
 #!/bin/bash
 
+echo "Creating non-root container '${USERNAME}' for host user uid=${HOST_USER_UID}:gid=${HOST_USER_GID}"
+
+if [ ! $(getent group ${HOST_USER_GID}) ]; then
+  groupadd --gid ${HOST_USER_GID} ${USERNAME} &>/dev/null
+else
+  CONFLICTING_GROUP_NAME=`getent group ${HOST_USER_GID} | cut -d: -f1`
+  groupmod -o --gid ${HOST_USER_GID} -n ${USERNAME} ${CONFLICTING_GROUP_NAME}
+fi
+
+if [ ! $(getent passwd ${HOST_USER_UID}) ]; then
+  useradd --no-log-init --uid ${HOST_USER_UID} --gid ${HOST_USER_GID} -m ${USERNAME} &>/dev/null
+else
+  CONFLICTING_USER_NAME=`getent passwd ${HOST_USER_UID} | cut -d: -f1`
+  usermod -l ${USERNAME} -u ${HOST_USER_UID} -m -d /home/${USERNAME} ${CONFLICTING_USER_NAME} &>/dev/null
+  mkdir -p /home/${USERNAME}
+  # Wipe files that may create issues for users with large uid numbers.
+  rm -f /var/log/lastlog /var/log/faillog
+fi
+
+# Update 'admin' user
+chown ${USERNAME}:${USERNAME} /home/${USERNAME}
+echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME}
+chmod 0440 /etc/sudoers.d/${USERNAME}
+adduser ${USERNAME} video >/dev/null
+adduser ${USERNAME} plugdev >/dev/null
+adduser ${USERNAME} sudo  >/dev/null
+
+# If jtop present, give the user access
+if [ -S /run/jtop.sock ]; then
+  JETSON_STATS_GID="$(stat -c %g /run/jtop.sock)"
+  addgroup --gid ${JETSON_STATS_GID} jtop >/dev/null
+  adduser ${USERNAME} jtop >/dev/null
+fi
+
+# Run all entrypoint additions
+shopt -s nullglob
+for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
+  if [[ "${addition}" =~ ".user." ]]; then
+    echo "Running entryrypoint extension: ${addition} as user ${USERNAME}"
+    gosu ${USERNAME} ${addition}
+  else
+    echo "Sourcing entryrypoint extension: ${addition}"
+    source ${addition}
+  fi
+done
+
 # Set the machine identification
 MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
 
@@ -43,7 +89,7 @@ PLATFORM="$(uname -m)"
 sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 
 #add nice capabilities to python3.8
-sudo setcap cap_sys_nice+ep /usr/bin/python3.8
+sudo setcap cap_sys_nice+ep /usr/bin/python3.10
 
 # Create ROS 2 library config file
 echo "/opt/ros/$ROS_DISTRO/lib" | sudo tee /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
@@ -65,7 +111,7 @@ source /opt/ros/${ROS_DISTRO}/setup.bash
 echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
 # Restart udev daemon
-sudo service udev restart
+service udev restart
 
 colcon build \
     --continue-on-error --packages-select \
@@ -202,6 +248,7 @@ trap _term SIGTERM SIGINT
 
 # Start the application
 ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
+# exec gosu ${USERNAME} "$@"
 
 # Task to catch the SIGTERM signal
 child=$! 

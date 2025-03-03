@@ -1,0 +1,23 @@
+[0.955s] Invoking command in '/workspaces/isaac_ros-dev/isaac_ros_test': AMENT_PREFIX_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common:/usr/local/libcudss-linux-0.3.0.9_cuda12-archive LD_LIBRARY_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common/lib:${LD_LIBRARY_PATH} PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common/bin:${PATH} PYTHONPATH=/workspaces/isaac_ros-dev/build/isaac_ros_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspaces/isaac_ros-dev/install/isaac_ros_test/lib/python3.10/site-packages:/workspaces/isaac_ros-dev/install/isaac_ros_common/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/isaac_ros_test build --build-base /workspaces/isaac_ros-dev/build/isaac_ros_test/build install --record /workspaces/isaac_ros-dev/build/isaac_ros_test/install.log --single-version-externally-managed install_data
+[1.237s] running egg_info
+[1.248s] writing ../build/isaac_ros_test/isaac_ros_test.egg-info/PKG-INFO
+[1.248s] writing dependency_links to ../build/isaac_ros_test/isaac_ros_test.egg-info/dependency_links.txt
+[1.248s] writing requirements to ../build/isaac_ros_test/isaac_ros_test.egg-info/requires.txt
+[1.248s] writing top-level names to ../build/isaac_ros_test/isaac_ros_test.egg-info/top_level.txt
+[1.283s] ERROR setuptools_scm._file_finders.git listing git files failed - pretending there aren't any
+[1.361s] reading manifest file '../build/isaac_ros_test/isaac_ros_test.egg-info/SOURCES.txt'
+[1.362s] writing manifest file '../build/isaac_ros_test/isaac_ros_test.egg-info/SOURCES.txt'
+[1.362s] running build
+[1.363s] running build_py
+[1.363s] Project path for isaac_ros_test: /workspaces/isaac_ros-dev/isaac_ros_test
+[1.404s] Generating version information as YAML
+[1.405s] running install
+[1.409s] running install_lib
+[1.420s] running install_data
+[1.420s] copying /workspaces/isaac_ros-dev/isaac_ros_test/build/version_info.yaml -> /workspaces/isaac_ros-dev/install/isaac_ros_test/share/isaac_ros_test
+[1.420s] running install_egg_info
+[1.431s] removing '/workspaces/isaac_ros-dev/install/isaac_ros_test/lib/python3.10/site-packages/isaac_ros_test-0.9.0-py3.10.egg-info' (and everything under it)
+[1.431s] Copying ../build/isaac_ros_test/isaac_ros_test.egg-info to /workspaces/isaac_ros-dev/install/isaac_ros_test/lib/python3.10/site-packages/isaac_ros_test-0.9.0-py3.10.egg-info
+[1.432s] running install_scripts
+[1.476s] writing list of installed files to '/workspaces/isaac_ros-dev/build/isaac_ros_test/install.log'
+[1.514s] Invoked command in '/workspaces/isaac_ros-dev/isaac_ros_test' returned '0': AMENT_PREFIX_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common:/usr/local/libcudss-linux-0.3.0.9_cuda12-archive LD_LIBRARY_PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common/lib:${LD_LIBRARY_PATH} PATH=/workspaces/isaac_ros-dev/install/isaac_ros_common/bin:${PATH} PYTHONPATH=/workspaces/isaac_ros-dev/build/isaac_ros_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspaces/isaac_ros-dev/install/isaac_ros_test/lib/python3.10/site-packages:/workspaces/isaac_ros-dev/install/isaac_ros_common/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/isaac_ros_test build --build-base /workspaces/isaac_ros-dev/build/isaac_ros_test/build install --record /workspaces/isaac_ros-dev/build/isaac_ros_test/install.log --single-version-externally-managed install_data
