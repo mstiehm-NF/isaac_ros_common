@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-isaac-ros-apriltag \
     ros-humble-isaac-ros-apriltag-benchmark \
     ros-humble-isaac-ros-argus-camera \
+    ros-humble-isaac-ros-bi3d \
+    ros-humble-isaac-ros-bi3d-freespace \
     ros-humble-isaac-ros-data-recorder \
     ros-humble-isaac-ros-data-replayer \
     ros-humble-isaac-ros-data-validation \
@@ -46,11 +48,14 @@ RUN apt-get update && apt-get install -y \
     ros-humble-isaac-ros-nitros-std-msg-type \
     ros-humble-isaac-ros-nitros-tensor-list-type \
     ros-humble-isaac-ros-nitros-topic-tools \
+    ros-humble-isaac-ros-peoplesemseg-models-install \
     ros-humble-isaac-ros-rosbag-utils \
+    ros-humble-isaac-ros-segformer \
     ros-humble-isaac-ros-stereo-image-proc \
     ros-humble-isaac-ros-tensor-proc \
     ros-humble-isaac-ros-tensor-rt \
     ros-humble-isaac-ros-triton \
+    ros-humble-isaac-ros-unet \
     && systemctl mask NetworkManager.service \
     && apt-get clean
 
