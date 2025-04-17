@@ -307,7 +307,7 @@ docker run -it --rm \
     -v /usr/certs:/usr/certs \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
-    --gpus all \
+    --runtime nvidia \
     --workdir /workspaces/isaac_ros-dev \
     $BASE_NAME \
     /bin/bash
