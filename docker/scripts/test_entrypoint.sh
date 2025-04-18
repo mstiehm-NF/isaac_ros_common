@@ -10,6 +10,7 @@ source /opt/ros/${ROS_DISTRO}/setup.bash
 sudo chown -R admin /workspaces/isaac_ros-dev/
 
 colcon build --packages-ignore isaac_ros_common isaac_ros_peoplenet_models_install \
+    --packages-skip isaac_ros_common isaac_ros_peoplenet_models_install \
 
 echo "source /workspaces/isaac_ros-dev/install/setup.bash" >> ~/.bashrc
 
