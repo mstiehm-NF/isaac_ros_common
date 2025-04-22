@@ -63,3 +63,17 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
     azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d \
     pytz tzlocal aiohttp aiofiles json5
+
+# Copy scripts
+RUN mkdir -p /usr/local/bin/scripts
+COPY scripts/*entrypoint.sh /usr/local/bin/scripts/
+RUN chmod +x /usr/local/bin/scripts/*.sh || true
+
+# Copy script additions
+RUN mkdir -p /usr/local/bin/scripts/entrypoint_additions
+COPY scripts/entrypoint_addition[s]/*.sh /usr/local/bin/scripts/entrypoint_additions/
+RUN chmod +x /usr/local/bin/scripts/entrypoint_additions/*.sh || true
+
+# Copy middleware profiles
+RUN mkdir -p /usr/local/share/middleware_profiles
+COPY middleware_profile[s]/*profile.xml /usr/local/share/middleware_profiles/
