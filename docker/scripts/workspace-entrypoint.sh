@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # ─── Clean shutdown on Ctrl+C or TERM ─────────────────────────────────────────
-
 echo "Creating non-root container '${USERNAME}' for host user uid=${HOST_USER_UID}:gid=${HOST_USER_GID}"
 
 _term() {
@@ -14,7 +13,6 @@ _term() {
 trap _term SIGTERM SIGINT
 
 # ─── User / Group setup ───────────────────────────────────────────────────────
-
 if ! getent group "${HOST_USER_GID}" >/dev/null; then
   groupadd --gid "${HOST_USER_GID}" "${USERNAME}" &>/dev/null
 else
@@ -39,7 +37,6 @@ adduser "${USERNAME}" plugdev  >/dev/null
 adduser "${USERNAME}" sudo     >/dev/null
 
 # ─── jtop socket access ────────────────────────────────────────────────────────
-
 if [ -S /run/jtop.sock ]; then
   JETSON_STATS_GID=$(stat -c %g /run/jtop.sock)
   addgroup --gid "${JETSON_STATS_GID}" jtop >/dev/null
@@ -47,7 +44,6 @@ if [ -S /run/jtop.sock ]; then
 fi
 
 # ─── Ensure the user has a ~/.bashrc ───────────────────────────────────────────
-
 HOME_DIR="/home/${USERNAME}"
 USER_BASHRC="${HOME_DIR}/.bashrc"
 
@@ -62,7 +58,6 @@ append_user_bashrc() {
 }
 
 # ─── Run any entrypoint extensions ────────────────────────────────────────────
-
 shopt -s nullglob
 for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
   if [[ "${addition}" =~ ".user." ]]; then
@@ -75,7 +70,6 @@ for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
 done
 
 # ─── Machine configuration ────────────────────────────────────────────────────
-
 MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
 if [ -f "${MACHINE_CONFIG_PATH}" ]; then
   CONFIG_ROUTE=".desired.machine_config.identification"
@@ -87,7 +81,6 @@ else
 fi
 
 # ─── ROS_DOMAIN_ID & ROS_NAMESPACE ────────────────────────────────────────────
-
 if [[ "${ROS_DOMAIN_ID}" != "null" ]] && (( ROS_DOMAIN_ID >= 0 && ROS_DOMAIN_ID < 233 )); then
   export ROS_DOMAIN_ID
   echo "ROS_DOMAIN_ID is set to ${ROS_DOMAIN_ID}"
@@ -107,14 +100,12 @@ fi
 append_user_bashrc "export ROS_NAMESPACE=${ROS_NAMESPACE}"
 
 # ─── ISAAC_ROS environment ────────────────────────────────────────────────────
-
 export ISAAC_ROS_WS="/workspaces/isaac_ros-dev"
 export ISAAC_ROS_ACCEPT_EULA="1"
 append_user_bashrc "export ISAAC_ROS_WS=${ISAAC_ROS_WS}"
 append_user_bashrc "export ISAAC_ROS_ACCEPT_EULA=1"
 
 # ─── Permissions, capabilities, and linker configs ────────────────────────────
-
 sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
 sudo setcap cap_sys_nice+ep /usr/bin/python3.10
 
@@ -135,12 +126,10 @@ sudo setcap cap_sys_nice+ep /usr/bin/python3.10
 sudo ldconfig
 
 # ─── Source ROS2 & workspace in this script (and save for future shells) ─────
-
 source /opt/ros/${ROS_DISTRO}/setup.bash
 append_user_bashrc "source /opt/ros/${ROS_DISTRO}/setup.bash"
 
 # ─── Build workspace ──────────────────────────────────────────────────────────
-
 colcon build --packages-ignore \
     isaac_ros_common \
     isaac_ros_peoplenet_models_install \
@@ -154,12 +143,10 @@ colcon build --packages-ignore \
     isaac_ros_test
 
 # ─── Source the built workspace & record for future shells ────────────────────
-
 source /workspaces/isaac_ros-dev/install/setup.bash
 append_user_bashrc "source /workspaces/isaac_ros-dev/install/setup.bash"
 
 # ─── LD cache for workspace libs ──────────────────────────────────────────────
-
 find /workspaces/isaac_ros-dev/install -type d -name lib \
   > /tmp/isaac_ros_install_libs.conf
 sudo mv /tmp/isaac_ros_install_libs.conf \
@@ -167,8 +154,8 @@ sudo mv /tmp/isaac_ros_install_libs.conf \
 sudo ldconfig
 
 # ─── Final directory perms & optional VS Code extensions ─────────────────────
-
 sudo chown 1000:1000 /usr/config/ /usr/data/ /usr/certs/
+
 if [[ "$(uname -m)" == "aarch64" ]]; then
   pip3 install typing-extensions --upgrade
 fi
@@ -189,7 +176,6 @@ if [[ "${VSCODE}" == "true" ]]; then
 fi
 
 # ─── Launch backend and keep this script alive ────────────────────────────────
-
 echo "Starting backend_ui_server as ${USERNAME}"
 gosu "${USERNAME}" bash -l -c "\
   ros2 run backend_ui_server server \
