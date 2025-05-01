@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     network-manager \
     jq \
     python3-pcl \
+    ros-humble-gscam \
     ros-humble-isaac-ros-apriltag \
     ros-humble-isaac-ros-apriltag-benchmark \
     ros-humble-isaac-ros-argus-camera \
