@@ -1,11 +1,81 @@
-ARG BASE_IMAGE
+ARG BASE_IMAGE=ubuntu:22.04
 FROM ${BASE_IMAGE}
+
+RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-key add - \
+    grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" /etc/apt/sources.list || \
+    echo "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" | sudo tee -a /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y \
+    network-manager \
+    jq \
+    python3-pcl \
+    ros-humble-gscam \
+    ros-humble-isaac-ros-apriltag \
+    ros-humble-isaac-ros-apriltag-benchmark \
+    ros-humble-isaac-ros-argus-camera \
+    ros-humble-isaac-ros-bi3d \
+    ros-humble-isaac-ros-bi3d-freespace \
+    ros-humble-isaac-ros-data-recorder \
+    ros-humble-isaac-ros-data-replayer \
+    ros-humble-isaac-ros-data-validation \
+    ros-humble-isaac-ros-depth-image-proc \
+    ros-humble-isaac-ros-gxf \
+    ros-humble-isaac-ros-image-pipeline \
+    ros-humble-isaac-ros-image-proc \
+    ros-humble-isaac-ros-jetson-stats \
+    ros-humble-isaac-ros-jetson-stats-services \
+    ros-humble-isaac-ros-launch-utils \
+    ros-humble-isaac-ros-managed-nitros \
+    ros-humble-isaac-ros-nitros \
+    ros-humble-isaac-ros-nitros-bi3d-inference-param-array-type \
+    ros-humble-isaac-ros-nitros-bridge-benchmark \
+    ros-humble-isaac-ros-nitros-bridge-ros2 \
+    ros-humble-isaac-ros-nitros-camera-info-type \
+    ros-humble-isaac-ros-nitros-compressed-image-type \
+    ros-humble-isaac-ros-nitros-compressed-video-type \
+    ros-humble-isaac-ros-nitros-correlated-timestamp-type \
+    ros-humble-isaac-ros-nitros-detection2-d-array-type \
+    ros-humble-isaac-ros-nitros-detection3-d-array-type \
+    ros-humble-isaac-ros-nitros-disparity-image-type \
+    ros-humble-isaac-ros-nitros-encoder-ticks-type \
+    ros-humble-isaac-ros-nitros-flat-scan-type \
+    ros-humble-isaac-ros-nitros-image-type \
+    ros-humble-isaac-ros-nitros-imu-type \
+    ros-humble-isaac-ros-nitros-occupancy-grid-type \
+    ros-humble-isaac-ros-nitros-odometry-type \
+    ros-humble-isaac-ros-nitros-point-cloud-type \
+    ros-humble-isaac-ros-nitros-pose-array-type \
+    ros-humble-isaac-ros-nitros-pose-cov-stamped-type \
+    ros-humble-isaac-ros-nitros-std-msg-type \
+    ros-humble-isaac-ros-nitros-tensor-list-type \
+    ros-humble-isaac-ros-nitros-topic-tools \
+    ros-humble-isaac-ros-peoplesemseg-models-install \
+    ros-humble-isaac-ros-rosbag-utils \
+    ros-humble-isaac-ros-segformer \
+    ros-humble-isaac-ros-stereo-image-proc \
+    ros-humble-isaac-ros-tensor-proc \
+    ros-humble-isaac-ros-tensor-rt \
+    ros-humble-isaac-ros-triton \
+    ros-humble-isaac-ros-unet \
 
 RUN apt-get update && apt-get install -y network-manager jq python3-pcl nlohmann-json3-dev\
     && systemctl mask NetworkManager.service \
     && apt-get clean
 
-# Fix uamqp installation issue
 RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
     azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d \
-    pytz tzlocal aiohttp aiofiles json5 py-spy
+    pytz tzlocal aiohttp aiofiles json5
+
+# Copy scripts
+RUN mkdir -p /usr/local/bin/scripts
+COPY scripts/*entrypoint.sh /usr/local/bin/scripts/
+RUN chmod +x /usr/local/bin/scripts/*.sh || true
+
+# Copy script additions
+RUN mkdir -p /usr/local/bin/scripts/entrypoint_additions
+COPY scripts/entrypoint_addition[s]/*.sh /usr/local/bin/scripts/entrypoint_additions/
+RUN chmod +x /usr/local/bin/scripts/entrypoint_additions/*.sh || true
+
+# Copy middleware profiles
+RUN mkdir -p /usr/local/share/middleware_profiles
+COPY middleware_profile[s]/*profile.xml /usr/local/share/middleware_profiles/

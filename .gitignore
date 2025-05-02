@@ -3,3 +3,4 @@
 
 # Ignore config files
 scripts/.isaac_ros_common-config
+/build

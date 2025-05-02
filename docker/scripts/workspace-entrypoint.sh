@@ -1,209 +1,186 @@
 #!/bin/bash
 
-# Set the machine identification
-MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
-
-
-if [ -f "$MACHINE_CONFIG_PATH" ]; then
-    CONFIG_ROUTE=".desired.machine_config.identification"
-    MACHINE_ID=$(jq -r "$CONFIG_ROUTE.machine_id" $MACHINE_CONFIG_PATH)
-    ROS_DOMAIN_ID=$(jq -r "$CONFIG_ROUTE.ros_domain_id" $MACHINE_CONFIG_PATH)
-    ROS_NAMESPACE=$(jq -r "$CONFIG_ROUTE.ros_namespace" $MACHINE_CONFIG_PATH)
-else
-    echo "Error: $MACHINE_CONFIG_PATH does not exist."
-fi
-
-# if ros domain id is less than 232 and greater than 0 set it
-if [ "$ROS_DOMAIN_ID" != "null" ] && [ "$ROS_DOMAIN_ID" -lt "233" ] && [ "$ROS_DOMAIN_ID" -gt "-1" ]; then
-    export ROS_DOMAIN_ID=$ROS_DOMAIN_ID
-    echo "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" >> ~/.bashrc
-    echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
-else
-    export ROS_DOMAIN_ID=0
-    echo "ROS_DOMAIN_ID is not set or out of range"
-    echo "ROS_DOMAIN_ID is set to $ROS_DOMAIN_ID"
-    echo "export ROS_DOMAIN_ID=$ROS_DOMAIN_ID" >> ~/.bashrc
-fi
-
-if [ "$ROS_NAMESPACE" == "null" ]; then
-    echo "ROS_NAMESPACE is not set"
-    export ROS_NAMESPACE=''
-    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
-    echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
-else
-    export ROS_NAMESPACE=$ROS_NAMESPACE
-    echo "ROS_NAMESPACE is set to $ROS_NAMESPACE"
-    echo "export ROS_NAMESPACE=$ROS_NAMESPACE" >> ~/.bashrc
-fi
-
-# Get platform
-PLATFORM="$(uname -m)"
-
-# Make sure the user has the correct permissions
-sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
-
-#add nice capabilities to python3.8
-sudo setcap cap_sys_nice+ep /usr/bin/python3.8
-
-# Create ROS 2 library config file
-echo "/opt/ros/$ROS_DISTRO/lib" | sudo tee /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
-echo "/opt/ros/$ROS_DISTRO/lib/x86_64-linux-gnu/" | sudo tee -a /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
-echo "/opt/ros/$ROS_DISTRO/opt/rviz_ogre_vendor/lib" | sudo tee -a /etc/ld.so.conf.d/ros2_$ROS_DISTRO.conf
-
-# Create NVIDIA library config file
-echo "/usr/local/cuda/compat/lib" | sudo tee /etc/ld.so.conf.d/nvidia_libs.conf
-echo "/usr/local/nvidia/lib" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
-echo "/usr/local/nvidia/lib64" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
-echo "/opt/tritonserver/backends/onnxruntime" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
-echo "/opt/tritonserver/lib" | sudo tee -a /etc/ld.so.conf.d/nvidia_libs.conf
-
-# Update the dynamic linker cache
-sudo ldconfig
-
-# Source ROS2
-source /opt/ros/${ROS_DISTRO}/setup.bash
-echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
-
-# Restart udev daemon
-sudo service udev restart
-
-colcon build \
-    --continue-on-error --packages-select \
-    backend_msgs \
-    backend_ui_server \
-    camera_pose_calibration \
-    can_ros_nodes \
-    custom_nitros_image \
-    custom_nitros_string \
-    drive_system_odometry \
-    isaac_ros_apriltag \
-    isaac_ros_apriltag_interfaces \
-    isaac_ros_bi3d_interfaces \
-    isaac_ros_common \
-    isaac_ros_depth_image_proc \
-    isaac_ros_detectnet \
-    isaac_ros_dnn_image_encoder \
-    isaac_ros_gxf \
-    isaac_ros_image_pipeline \
-    isaac_ros_image_proc \
-    isaac_ros_managed_nitros \
-    isaac_ros_nitros \
-    isaac_ros_nitros_april_tag_detection_array_type \
-    isaac_ros_nitros_bridge_interfaces \
-    isaac_ros_nitros_camera_info_type \
-    isaac_ros_nitros_compressed_image_type \
-    isaac_ros_nitros_detection2_d_array_type \
-    isaac_ros_nitros_detection3_d_array_type \
-    isaac_ros_nitros_disparity_image_type \
-    isaac_ros_nitros_flat_scan_type \
-    isaac_ros_nitros_imu_type \
-    isaac_ros_nitros_image_type \
-    isaac_ros_nitros_interfaces \
-    isaac_ros_nitros_occupancy_grid_type \
-    isaac_ros_nitros_odometry_type \
-    isaac_ros_nitros_point_cloud_type \
-    isaac_ros_nitros_pose_array_type \
-    isaac_ros_nitros_pose_cov_stamped_type \
-    isaac_ros_nitros_std_msg_type \
-    isaac_ros_nitros_tensor_list_type \
-    isaac_ros_nitros_twist_type \
-    isaac_ros_nvblox \
-    isaac_ros_pointcloud_interfaces \
-    isaac_ros_stereo_image_proc \
-    isaac_ros_tensor_list_interfaces \
-    isaac_ros_tensor_rt \
-    isaac_ros_test \
-    isaac_ros_triton \
-    isaac_ros_visual_slam \
-    isaac_ros_visual_slam_interfaces \
-    isaac_ros_yolov8 \
-    isaac_slam_saver \
-    map_saver_2d \
-    microcdr \
-    micro_ros_agent \
-    micro_ros_msgs \
-    microxrcedds_client \
-    mmc_ui_msgs \
-    mli_ros_simulator \
-    nvblox \
-    nvblox_cpu_gpu_tools \
-    nvblox_examples_bringup \
-    nvblox_image_padding \
-    nvblox_isaac_sim \
-    nvblox_msgs \
-    nvblox_nav2 \
-    nvblox_performance_measurement \
-    nvblox_performance_measurement_msgs \
-    nvblox_ros \
-    nvblox_ros_common \
-    nvblox_rviz_plugin \
-    odometry_flattener \
-    realsense2_camera \
-    realsense2_camera_msgs \
-    realsense2_description \
-    realsense_splitter \
-    ros_simulator_web_app \
-    semantic_label_conversion \
-    serial_ros_nodes \
-     
-    # isaac_ros_nitros_battery_state_type \
-    # isaac_ros_nitros_correlated_timestamp_type \
-    # isaac_ros_nitros_encoder_ticks_type \
-    # isaac_ros_nova_interfaces \
-    # network_performance_measurement \
-    # depthai_bridge \
-    # depthai_descriptions \
-    # depthai_examples \
-    # depthai_filters \
-    # depthai-ros \
-    # depthai_ros_driver \
-    # depthai_ros_msgs \
-
-echo "source /workspaces/isaac_ros-dev/install/setup.bash" >> ~/.bashrc
-source /workspaces/isaac_ros-dev/install/setup.bash
-
-# Find all lib directories under your workspace install and write them to a temporary file.
-find /workspaces/isaac_ros-dev/install -type d -name lib > /tmp/isaac_ros_install_libs.conf
-
-# Move the temporary file to /etc/ld.so.conf.d/ (using sudo to have proper permissions)
-sudo mv /tmp/isaac_ros_install_libs.conf /etc/ld.so.conf.d/isaac_ros_install_libs.conf
-
-# Update the dynamic linker cache
-sudo ldconfig
-
-# Setup before starting BE server
-sudo chown 1000:1000 /usr/config/
-sudo chown 1000:1000 /usr/data/
-sudo chown 1000:1000 /usr/certs/
-
-if [[ "$PLATFORM" == "aarch64" ]]; then
-    pip3 install typing-extensions --upgrade
-fi
-
-export RUN_DEV=true
-
-# If VS Code is installed
-if [[ "$VSCODE" == true ]]; then
-    code --install-extension ms-python.python --force --user-data-dir $HOME/.vscode/ 
-    code --install-extension codium.codium --force --user-data-dir $HOME/.vscode/
-    code --install-extension github.copilot --force --user-data-dir $HOME/.vscode/
-    code --install-extension ms-azuretools.vscode-docker --force --user-data-dir $HOME/.vscode/
-    code --install-extension github.vscode-pull-request-github --force --user-data-dir $HOME/.vscode/
-    code --install-extension eamodio.gitlens --force --user-data-dir $HOME/.vscode/
-    code --disable-gpu
-fi
+# ─── Clean shutdown on Ctrl+C or TERM ─────────────────────────────────────────
+echo "Creating non-root container '${USERNAME}' for host user uid=${HOST_USER_UID}:gid=${HOST_USER_GID}"
 
 _term() {
-    echo "Caught SIGTERM signal!!!"
+    echo "Caught SIGTERM signal!"
     kill -TERM -1
+    sleep 2
+    echo "Now exiting"
     exit 0
 }
 trap _term SIGTERM SIGINT
 
-# Start the application
-ros2 run backend_ui_server server --ros-args -r __ns:=/${ROS_NAMESPACE} &
+# ─── User / Group setup ───────────────────────────────────────────────────────
+if ! getent group "${HOST_USER_GID}" >/dev/null; then
+  groupadd --gid "${HOST_USER_GID}" "${USERNAME}" &>/dev/null
+else
+  CONFLICTING_GROUP_NAME=$(getent group "${HOST_USER_GID}" | cut -d: -f1)
+  groupmod -o --gid "${HOST_USER_GID}" -n "${USERNAME}" "${CONFLICTING_GROUP_NAME}"
+fi
+
+if ! getent passwd "${HOST_USER_UID}" >/dev/null; then
+  useradd --no-log-init --uid "${HOST_USER_UID}" --gid "${HOST_USER_GID}" -m "${USERNAME}" &>/dev/null
+else
+  CONFLICTING_USER_NAME=$(getent passwd "${HOST_USER_UID}" | cut -d: -f1)
+  usermod -l "${USERNAME}" -u "${HOST_USER_UID}" -m -d "/home/${USERNAME}" "${CONFLICTING_USER_NAME}" &>/dev/null
+  mkdir -p "/home/${USERNAME}"
+  rm -f /var/log/lastlog /var/log/faillog
+fi
+
+chown "${USERNAME}:${USERNAME}" "/home/${USERNAME}"
+echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}"
+chmod 0440 "/etc/sudoers.d/${USERNAME}"
+adduser "${USERNAME}" video    >/dev/null
+adduser "${USERNAME}" plugdev  >/dev/null
+adduser "${USERNAME}" sudo     >/dev/null
+
+# ─── jtop socket access ────────────────────────────────────────────────────────
+if [ -S /run/jtop.sock ]; then
+  JETSON_STATS_GID=$(stat -c %g /run/jtop.sock)
+  addgroup --gid "${JETSON_STATS_GID}" jtop >/dev/null
+  adduser "${USERNAME}" jtop       >/dev/null
+fi
+
+# ─── Ensure the user has a ~/.bashrc ───────────────────────────────────────────
+HOME_DIR="/home/${USERNAME}"
+USER_BASHRC="${HOME_DIR}/.bashrc"
+
+if [ ! -f "${USER_BASHRC}" ]; then
+  cp /etc/skel/.bashrc "${USER_BASHRC}"
+  chown "${USERNAME}:${USERNAME}" "${USER_BASHRC}"
+fi
+
+append_user_bashrc() {
+  echo "$1" | tee -a "${USER_BASHRC}" >/dev/null
+  chown "${USERNAME}:${USERNAME}" "${USER_BASHRC}"
+}
+
+# ─── Run any entrypoint extensions ────────────────────────────────────────────
+shopt -s nullglob
+for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
+  if [[ "${addition}" =~ ".user." ]]; then
+    echo "Running entrypoint extension: ${addition} as user ${USERNAME}"
+    gosu "${USERNAME}" "${addition}"
+  else
+    echo "Sourcing entrypoint extension: ${addition}"
+    source "${addition}"
+  fi
+done
+
+# ─── Machine configuration ────────────────────────────────────────────────────
+MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
+if [ -f "${MACHINE_CONFIG_PATH}" ]; then
+  CONFIG_ROUTE=".desired.machine_config.identification"
+  MACHINE_ID=$(jq -r "${CONFIG_ROUTE}.machine_id"       "${MACHINE_CONFIG_PATH}")
+  ROS_DOMAIN_ID=$(jq -r "${CONFIG_ROUTE}.ros_domain_id" "${MACHINE_CONFIG_PATH}")
+  ROS_NAMESPACE=$(jq -r "${CONFIG_ROUTE}.ros_namespace" "${MACHINE_CONFIG_PATH}")
+else
+  echo "Error: ${MACHINE_CONFIG_PATH} does not exist."
+fi
+
+# ─── ROS_DOMAIN_ID & ROS_NAMESPACE ────────────────────────────────────────────
+if [[ "${ROS_DOMAIN_ID}" != "null" ]] && (( ROS_DOMAIN_ID >= 0 && ROS_DOMAIN_ID < 233 )); then
+  export ROS_DOMAIN_ID
+  echo "ROS_DOMAIN_ID is set to ${ROS_DOMAIN_ID}"
+else
+  export ROS_DOMAIN_ID=0
+  echo "ROS_DOMAIN_ID not set or out of range; defaulting to 0"
+fi
+append_user_bashrc "export ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"
+
+if [[ "${ROS_NAMESPACE}" == "null" ]]; then
+  export ROS_NAMESPACE=''
+  echo "ROS_NAMESPACE not set; using empty string"
+else
+  export ROS_NAMESPACE
+  echo "ROS_NAMESPACE is set to ${ROS_NAMESPACE}"
+fi
+append_user_bashrc "export ROS_NAMESPACE=${ROS_NAMESPACE}"
+
+# ─── ISAAC_ROS environment ────────────────────────────────────────────────────
+export ISAAC_ROS_WS="/workspaces/isaac_ros-dev"
+export ISAAC_ROS_ACCEPT_EULA="1"
+append_user_bashrc "export ISAAC_ROS_WS=${ISAAC_ROS_WS}"
+append_user_bashrc "export ISAAC_ROS_ACCEPT_EULA=1"
+
+# ─── Permissions, capabilities, and linker configs ────────────────────────────
+sudo chown -R 1000:1000 /workspaces/isaac_ros-dev/install
+sudo setcap cap_sys_nice+ep /usr/bin/python3.10
+
+{
+  echo "/opt/ros/${ROS_DISTRO}/lib"
+  echo "/opt/ros/${ROS_DISTRO}/lib/x86_64-linux-gnu/"
+  echo "/opt/ros/${ROS_DISTRO}/opt/rviz_ogre_vendor/lib"
+} | sudo tee /etc/ld.so.conf.d/ros2_${ROS_DISTRO}.conf
+
+{
+  echo "/usr/local/cuda/compat/lib"
+  echo "/usr/local/nvidia/lib"
+  echo "/usr/local/nvidia/lib64"
+  echo "/opt/tritonserver/backends/onnxruntime"
+  echo "/opt/tritonserver/lib"
+} | sudo tee /etc/ld.so.conf.d/nvidia_libs.conf
+
+sudo ldconfig
+
+# ─── Source ROS2 & workspace in this script (and save for future shells) ─────
+source /opt/ros/${ROS_DISTRO}/setup.bash
+append_user_bashrc "source /opt/ros/${ROS_DISTRO}/setup.bash"
+
+# ─── Build workspace ──────────────────────────────────────────────────────────
+colcon build --packages-ignore \
+    isaac_ros_common \
+    isaac_ros_peoplenet_models_install \
+    isaac_ros_apriltag_interfaces \
+    isaac_ros_bi3d_interfaces \
+    isaac_ros_launch_utils \
+    isaac_ros_nitros_bridge_interfaces \
+    isaac_ros_nova_interfaces \
+    isaac_ros_pointcloud_interfaces \
+    isaac_ros_tensor_list_interfaces \
+    isaac_ros_test
+
+# ─── Source the built workspace & record for future shells ────────────────────
+source /workspaces/isaac_ros-dev/install/setup.bash
+append_user_bashrc "source /workspaces/isaac_ros-dev/install/setup.bash"
+
+# ─── LD cache for workspace libs ──────────────────────────────────────────────
+find /workspaces/isaac_ros-dev/install -type d -name lib \
+  > /tmp/isaac_ros_install_libs.conf
+sudo mv /tmp/isaac_ros_install_libs.conf \
+          /etc/ld.so.conf.d/isaac_ros_install_libs.conf
+sudo ldconfig
+
+# ─── Final directory perms & optional VS Code extensions ─────────────────────
+sudo chown 1000:1000 /usr/config/ /usr/data/ /usr/certs/
+
+if [[ "$(uname -m)" == "aarch64" ]]; then
+  pip3 install typing-extensions --upgrade
+fi
+
+export RUN_DEV=true
+
+if [[ "${VSCODE}" == "true" ]]; then
+  for ext in \
+    ms-python.python \
+    github.copilot \
+    ms-azuretools.vscode-docker \
+    github.vscode-pull-request-github \
+    eamodio.gitlens; do
+    gosu "${USERNAME}" code --install-extension "${ext}" \
+      --force --user-data-dir "${HOME_DIR}/.vscode/"
+  done
+  gosu "${USERNAME}" code --disable-gpu
+fi
+
+# ─── Launch backend and keep this script alive ────────────────────────────────
+echo "Starting backend_ui_server as ${USERNAME}"
+gosu "${USERNAME}" bash -l -c "\
+  ros2 run backend_ui_server server \
+    --ros-args -r __ns:=/${ROS_NAMESPACE}" &
 
 # Task to catch the SIGTERM signal
 child=$! 
 wait "$child"
-
