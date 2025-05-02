@@ -1,7 +1,0 @@
-{
-  "package_name": "isaac_ros_nitros_bridge_interfaces",
-  "non_idl_tuples": [
-    "/workspaces/isaac_ros-dev/isaac_ros_nitros_bridge_interfaces:msg/NitrosBridgeImage.msg",
-    "/workspaces/isaac_ros-dev/isaac_ros_nitros_bridge_interfaces:msg/NitrosBridgeTensorList.msg"
-  ]
-}
