@@ -308,6 +308,7 @@ docker run -it --rm \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
     --runtime nvidia \
+    --entrypoint /usr/local/bin/scripts/workspace-entrypoint.sh \
     --workdir /workspaces/isaac_ros-dev \
     $BASE_NAME \
     /bin/bash
