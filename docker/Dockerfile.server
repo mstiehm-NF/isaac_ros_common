@@ -6,8 +6,15 @@ RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-
     echo "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" | sudo tee -a /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
-    network-manager \
     jq \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-base-apps \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-x \
+    network-manager \
     python3-pcl \
     ros-humble-gscam \
     ros-humble-isaac-ros-apriltag \
@@ -57,11 +64,10 @@ RUN apt-get update && apt-get install -y \
     ros-humble-isaac-ros-tensor-rt \
     ros-humble-isaac-ros-triton \
     ros-humble-isaac-ros-unet \
-
-RUN apt-get update && apt-get install -y network-manager jq python3-pcl nlohmann-json3-dev\
     && systemctl mask NetworkManager.service \
     && apt-get clean
 
+#install deps
 RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
     azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d \
     pytz tzlocal aiohttp aiofiles json5
