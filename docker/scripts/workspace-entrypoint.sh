@@ -175,6 +175,8 @@ if [[ "${VSCODE}" == "true" ]]; then
   gosu "${USERNAME}" code --disable-gpu
 fi
 
+service udev restart
+
 # ─── Launch backend and keep this script alive ────────────────────────────────
 echo "Starting backend_ui_server as ${USERNAME}"
 gosu "${USERNAME}" bash -l -c "\
