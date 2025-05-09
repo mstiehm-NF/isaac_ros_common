@@ -5,11 +5,11 @@ RUN --mount=type=cache,target=/var/cache/apt \
     wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | apt-key add - && \
     grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" /etc/apt/sources.list || \
     echo "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" | tee -a /etc/apt/sources.list
-    
+
 #Remove duplicate entries
-RUN sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
-    sudo awk '!seen[$0]++' /etc/apt/sources.list.bak \
-    | sudo tee /etc/apt/sources.list > /dev/null
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak \
+    awk '!seen[$0]++' /etc/apt/sources.list.bak \
+    | tee /etc/apt/sources.list > /dev/null
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
