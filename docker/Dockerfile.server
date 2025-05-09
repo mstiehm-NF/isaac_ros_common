@@ -31,7 +31,6 @@ RUN apt-get update && apt-get install -y \
     ros-humble-isaac-ros-image-proc \
     ros-humble-isaac-ros-jetson-stats \
     ros-humble-isaac-ros-jetson-stats-services \
-    ros-humble-isaac-ros-launch-utils \
     ros-humble-isaac-ros-managed-nitros \
     ros-humble-isaac-ros-nitros \
     ros-humble-isaac-ros-nitros-bi3d-inference-param-array-type \

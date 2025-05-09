@@ -99,23 +99,31 @@ class ArgumentContainer(argparse.Namespace):
 
     def add_opaque_function(
         self,
-        function: Callable[['ArgumentContainer'], list[lut.Action] | None],
+        # The function provided by the user (typically a lambda)
+        # should expect to receive the LaunchContext.
+        function: Callable[[lut.LaunchContext], list[lut.Action] | None],
         condition: lut.Condition = None,
     ) -> lut.OpaqueFunction:
         """
-        Helper function to add an opaque function that has access to all the evaluated arguments.
+        Helper function to add an opaque function.
+        The provided 'function' will be called with the launch context.
+        A common pattern for 'function' is a lambda like:
+        `lambda context: my_actual_function(context, self)`
+        where 'self' is this ArgumentContainer instance, allowing
+        `my_actual_function` to have a signature like:
+        `my_actual_function(context: LaunchContext, args: ArgumentContainer)`
         """
 
-        def helper_function(context: lut.LaunchContext):
-            evaluated_args = argparse.Namespace()
-            for launch_configuration in self._launch_configurations:
-                name = launch_configuration.variable_name[0].perform(context)
-                value_str = launch_configuration.perform(context)
-                value = _try_convert_string_to_primitive(value_str)
-                setattr(evaluated_args, name, value)
-            return function(evaluated_args)
+        # This wrapper function is what's actually passed to OpaqueFunction.
+        # It receives the true LaunchContext from the launch system.
+        def helper_function_wrapper(context: lut.LaunchContext):
+            # Call the user's provided function (e.g., their lambda)
+            # and pass the true LaunchContext to it. The user's function
+            # is then responsible for passing this context and the
+            # ArgumentContainer (if needed) to their target function.
+            return function(context)
 
-        opaque_function = lut.OpaqueFunction(function=helper_function, condition=condition)
+        opaque_function = lut.OpaqueFunction(function=helper_function_wrapper, condition=condition)
         self._opaque_functions.append(opaque_function)
         return opaque_function
 
@@ -426,7 +434,8 @@ def static_transform(parent: str,
                      translation: list[float] | None = None,
                      orientation_rpy: list[float] | None = None,
                      orientation_quaternion: list[float] | None = None,
-                     condition=None):
+                     condition=None,
+                     namespace="") -> lut.Action:
     if translation is None:
         translation = [0, 0, 0]
     if orientation_rpy is None:
@@ -440,6 +449,7 @@ def static_transform(parent: str,
     return lut.Node(
         package='tf2_ros',
         name='my_stat_tf_pub',
+        namespace=namespace,
         executable='static_transform_publisher',
         output='screen',
         arguments=translation + orientation + [parent, child],

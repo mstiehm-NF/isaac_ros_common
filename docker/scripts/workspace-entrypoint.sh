@@ -131,16 +131,17 @@ append_user_bashrc "source /opt/ros/${ROS_DISTRO}/setup.bash"
 
 # ─── Build workspace ──────────────────────────────────────────────────────────
 colcon build --packages-ignore \
-    isaac_ros_common \
     isaac_ros_peoplenet_models_install \
     isaac_ros_apriltag_interfaces \
     isaac_ros_bi3d_interfaces \
-    isaac_ros_launch_utils \
     isaac_ros_nitros_bridge_interfaces \
     isaac_ros_nova_interfaces \
     isaac_ros_pointcloud_interfaces \
     isaac_ros_tensor_list_interfaces \
-    isaac_ros_test
+    isaac_ros_test \
+    --allow-overriding isaac_ros_common \
+    --allow-overriding isaac_ros_launch_utils
+
 
 # ─── Source the built workspace & record for future shells ────────────────────
 source /workspaces/isaac_ros-dev/install/setup.bash
