@@ -182,7 +182,7 @@ RUN python3 -m pip install \
     "warp-lang==0.11.0" \
     packaging==24.2 \
     "mapbox_earcut==1.0.1" \
-    "yourdfpy==0.0.53" \
+    "yourdfpy>=0.0.53" \
     opentelemetry-api==1.28.1 \
     opentelemetry-sdk==1.28.1 \
     opentelemetry-exporter-otlp==1.28.1
