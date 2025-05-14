@@ -178,7 +178,7 @@ RUN python3 -m pip install \
     scikit-learn \
     "setuptools_scm>=6.2" \
     tqdm \
-    trimesh \
+    # trimesh \
     "warp-lang==0.11.0" \
     packaging==24.2 \
     "mapbox_earcut==1.0.1" \
