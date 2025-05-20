@@ -219,7 +219,7 @@ fi
 
 # If using the tests layer, run the test entrypoint not the regular one
 if [[ "$BASE_IMAGE_KEY" == *"tests"* ]]; then
-    RUN_TESTS=true
+    RUN_TESTS='true'
 fi
 
 # Check image is available
@@ -283,10 +283,10 @@ if [[ -f "${DOCKER_ARGS_FILEPATH}" ]]; then
     done
 fi
 
-if [[ "$RUN_TESTS"=='true' ]]; then
-    ENTRYPOINT="/usr/local/bin/scripts/test_entrypoint.sh"
-else
+if [[ -z "$RUN_TESTS" ]]; then
     ENTRYPOINT="/usr/local/bin/scripts/workspace-entrypoint.sh"
+else
+    ENTRYPOINT="/usr/local/bin/scripts/test_entrypoint.sh"
 fi
 
 # Run container from image
