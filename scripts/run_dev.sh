@@ -218,8 +218,8 @@ if [[ $SKIP_IMAGE_BUILD -ne 1 ]]; then
 fi
 
 # If using the tests layer, run the test entrypoint not the regular one
-if [[ $BASE_IMAGE_KEY == *"tests"* ]]; then
-  RUN_TESTS=true
+if [[ "$BASE_IMAGE_KEY" == *"tests"* ]]; then
+    RUN_TESTS=true
 fi
 
 # Check image is available
@@ -283,10 +283,10 @@ if [[ -f "${DOCKER_ARGS_FILEPATH}" ]]; then
     done
 fi
 
-if [[ -z "$RUN_TESTS" ]]; then
-    DOCKER_ARGS+=(--entrypoint /usr/local/bin/scripts/workspace-entrypoint.sh)
-    else
-    DOCKER_ARGS+=("--entrypoint /usr/local/bin/scripts/test_entrypoint.sh")
+if [[ "$RUN_TESTS"=='true' ]]; then
+    ENTRYPOINT="/usr/local/bin/scripts/test_entrypoint.sh"
+else
+    ENTRYPOINT="/usr/local/bin/scripts/workspace-entrypoint.sh"
 fi
 
 # Run container from image
@@ -308,7 +308,7 @@ docker run -it --rm \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
     --runtime nvidia \
-    --entrypoint /usr/local/bin/scripts/workspace-entrypoint.sh \
+    --entrypoint $ENTRYPOINT \
     --workdir /workspaces/isaac_ros-dev \
     $BASE_NAME \
     /bin/bash
