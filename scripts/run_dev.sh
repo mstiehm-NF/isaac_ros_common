@@ -302,9 +302,10 @@ docker run -it --rm \
     -v $ISAAC_ROS_DEV_DIR:/workspaces/isaac_ros-dev \
     -v /dev/:/dev/ \
     -v /etc/localtime:/etc/localtime:ro \
+    -v /usr/certs:/usr/certs \
     -v /usr/config:/usr/config \
     -v /usr/data:/usr/data \
-    -v /usr/certs:/usr/certs \
+    -v /usr/log:/usr/log \
     -v /var/run/dbus:/var/run/dbus \
     --name "$CONTAINER_NAME" \
     --runtime nvidia \

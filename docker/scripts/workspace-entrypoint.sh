@@ -71,11 +71,12 @@ done
 
 # ─── Machine configuration ────────────────────────────────────────────────────
 MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
-if [ -f "${MACHINE_CONFIG_PATH}" ]; then
+if [[ -f "${MACHINE_CONFIG_PATH}" ]]; then
   CONFIG_ROUTE=".desired.machine_config.identification"
-  MACHINE_ID=$(jq -r "${CONFIG_ROUTE}.machine_id"       "${MACHINE_CONFIG_PATH}")
+  LOG_ROUTE=".desired.machine_config.log_config"
   ROS_DOMAIN_ID=$(jq -r "${CONFIG_ROUTE}.ros_domain_id" "${MACHINE_CONFIG_PATH}")
-  ROS_NAMESPACE=$(jq -r "${CONFIG_ROUTE}.ros_namespace" "${MACHINE_CONFIG_PATH}")
+  ROS_NAMESPACE=$(jq -r "${CONFIG_ROUTE}.ros_namespace"  "${MACHINE_CONFIG_PATH}")
+  LOG_RETENTION_DAYS=$(jq -r "${LOG_ROUTE}.log_retention_days" "${MACHINE_CONFIG_PATH}")
 else
   echo "Error: ${MACHINE_CONFIG_PATH} does not exist."
 fi
@@ -98,6 +99,15 @@ else
   echo "ROS_NAMESPACE is set to ${ROS_NAMESPACE}"
 fi
 append_user_bashrc "export ROS_NAMESPACE=${ROS_NAMESPACE}"
+
+if [[ "${LOG_RETENTION_DAYS}" != "null" ]] && [[ "${LOG_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
+  export LOG_RETENTION_DAYS
+  echo "ROS Log retention time is set to ${LOG_RETENTION_DAYS} days"
+else
+  echo "ROS Log retention time is not set or invalid, defaulting to 7 days"
+  export LOG_RETENTION_DAYS=1440
+fi
+append_user_bashrc "export LOG_RETENTION_DAYS=${LOG_RETENTION_DAYS}"
 
 # ─── ISAAC_ROS environment ────────────────────────────────────────────────────
 export ISAAC_ROS_WS="/workspaces/isaac_ros-dev"
@@ -154,8 +164,14 @@ sudo mv /tmp/isaac_ros_install_libs.conf \
           /etc/ld.so.conf.d/isaac_ros_install_libs.conf
 sudo ldconfig
 
+# ─── Set up permissions and groups ──────────────────────────────────────────────────────
+LOGGING_DIR="/usr/log"
+if [ ! -d "$LOGGING_DIR" ]; then
+  sudo mkdir -p "$LOGGING_DIR"
+fi
+
 # ─── Final directory perms & optional VS Code extensions ─────────────────────
-sudo chown 1000:1000 /usr/config/ /usr/data/ /usr/certs/
+sudo chown 1000:1000 /usr/config/ /usr/data/ /usr/certs/ /usr/log/
 
 if [[ "$(uname -m)" == "aarch64" ]]; then
   pip3 install typing-extensions --upgrade
@@ -178,9 +194,28 @@ fi
 
 service udev restart
 
+# ─── Set up ROS logging directory ────────────────────────────────────────────────
+export ROS_LOG_DIR=$LOGGING_DIR
+autodelete_logs() {
+  while true; do
+    # Sleep for 3600 seconds
+    sleep 3600
+
+    # Delete logs older than 24 hours
+    find "${ROS_LOG_DIR}" -type f -mtime +${LOG_RETENTION_DAYS} -delete
+  done
+}
+autodelete_logs &
+
 # ─── Launch backend and keep this script alive ────────────────────────────────
 echo "Starting backend_ui_server as ${USERNAME}"
 gosu "${USERNAME}" bash -l -c "\
+  export ROS_DOMAIN_ID=${ROS_DOMAIN_ID} && \
+  export ROS_NAMESPACE=${ROS_NAMESPACE} && \
+  export LOG_RETENTION_DAYS=${LOG_RETENTION_DAYS} && \
+  export ROS_LOG_DIR=${ROS_LOG_DIR} && \
+  export ISAAC_ROS_WS=${ISAAC_ROS_WS} && \
+  export ISAAC_ROS_ACCEPT_EULA=1 && \
   ros2 run backend_ui_server server \
     --ros-args -r __ns:=/${ROS_NAMESPACE}" &
 
