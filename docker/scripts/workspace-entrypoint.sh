@@ -73,10 +73,8 @@ done
 MACHINE_CONFIG_PATH="/usr/config/machine_config.json"
 if [[ -f "${MACHINE_CONFIG_PATH}" ]]; then
   CONFIG_ROUTE=".desired.machine_config.identification"
-  LOG_ROUTE=".desired.machine_config.log_config"
   ROS_DOMAIN_ID=$(jq -r "${CONFIG_ROUTE}.ros_domain_id" "${MACHINE_CONFIG_PATH}")
   ROS_NAMESPACE=$(jq -r "${CONFIG_ROUTE}.ros_namespace"  "${MACHINE_CONFIG_PATH}")
-  LOG_RETENTION_DAYS=$(jq -r "${LOG_ROUTE}.log_retention_days" "${MACHINE_CONFIG_PATH}")
 else
   echo "Error: ${MACHINE_CONFIG_PATH} does not exist."
 fi
@@ -105,7 +103,7 @@ if [[ "${LOG_RETENTION_DAYS}" != "null" ]] && [[ "${LOG_RETENTION_DAYS}" =~ ^[0-
   echo "ROS Log retention time is set to ${LOG_RETENTION_DAYS} days"
 else
   echo "ROS Log retention time is not set or invalid, defaulting to 7 days"
-  export LOG_RETENTION_DAYS=1440
+  export LOG_RETENTION_DAYS=7
 fi
 append_user_bashrc "export LOG_RETENTION_DAYS=${LOG_RETENTION_DAYS}"
 
@@ -196,13 +194,28 @@ service udev restart
 
 # ─── Set up ROS logging directory ────────────────────────────────────────────────
 export ROS_LOG_DIR=$LOGGING_DIR
+
 autodelete_logs() {
   while true; do
+    if [[ -f "${MACHINE_CONFIG_PATH}" ]]; then
+      LOG_ROUTE=".desired.machine_config.log_config"
+      LOG_RETENTION_DAYS=$(jq -r "${LOG_ROUTE}.log_retention_days" "${MACHINE_CONFIG_PATH}")
+        if [[ "${LOG_RETENTION_DAYS}" != "null" ]] && [[ "${LOG_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
+          export LOG_RETENTION_DAYS
+          echo "ROS Log retention time is set to ${LOG_RETENTION_DAYS} days"
+        else
+          echo "ROS Log retention time is not set or invalid, defaulting to 7 days"
+          export LOG_RETENTION_DAYS=7
+        fi
+    else
+      echo "Error: ${MACHINE_CONFIG_PATH} does not exist. Defaulting log retention to 7 days."
+      export LOG_RETENTION_DAYS=7
+    fi
+    # Delete logs older than LOG_RETENTION_DAYS
+    echo "Deleting logs older than ${LOG_RETENTION_DAYS} days in ${ROS_LOG_DIR}"
+    find "${ROS_LOG_DIR}" -mindepth 1 -mtime +${LOG_RETENTION_DAYS} -delete
     # Sleep for 3600 seconds
     sleep 3600
-
-    # Delete logs older than 24 hours
-    find "${ROS_LOG_DIR}" -type f -mtime +${LOG_RETENTION_DAYS} -delete
   done
 }
 autodelete_logs &
