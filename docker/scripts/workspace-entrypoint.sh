@@ -98,15 +98,6 @@ else
 fi
 append_user_bashrc "export ROS_NAMESPACE=${ROS_NAMESPACE}"
 
-if [[ "${LOG_RETENTION_DAYS}" != "null" ]] && [[ "${LOG_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
-  export LOG_RETENTION_DAYS
-  echo "ROS Log retention time is set to ${LOG_RETENTION_DAYS} days"
-else
-  echo "ROS Log retention time is not set or invalid, defaulting to 7 days"
-  export LOG_RETENTION_DAYS=7
-fi
-append_user_bashrc "export LOG_RETENTION_DAYS=${LOG_RETENTION_DAYS}"
-
 # ─── ISAAC_ROS environment ────────────────────────────────────────────────────
 export ISAAC_ROS_WS="/workspaces/isaac_ros-dev"
 export ISAAC_ROS_ACCEPT_EULA="1"
