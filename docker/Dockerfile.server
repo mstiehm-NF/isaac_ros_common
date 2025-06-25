@@ -69,7 +69,7 @@ RUN apt-get update && apt-get install -y \
 #install deps
 RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
     azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d \
-    pytz tzlocal aiohttp aiofiles json5
+    pytz tzlocal aiohttp aiofiles json5 timezonefinder
 
 # Copy scripts
 RUN mkdir -p /usr/local/bin/scripts
