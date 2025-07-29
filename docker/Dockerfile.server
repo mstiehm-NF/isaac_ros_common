@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-x \
     network-manager \
     python3-pcl \
+    python3-distutils \
     ros-humble-gscam \
     ros-humble-isaac-ros-apriltag \
     ros-humble-isaac-ros-apriltag-benchmark \
