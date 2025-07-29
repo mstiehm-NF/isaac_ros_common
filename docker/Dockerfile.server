@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-x \
     network-manager \
     python3-pcl \
-    python3-distutils \
     ros-humble-gscam \
     ros-humble-isaac-ros-apriltag \
     ros-humble-isaac-ros-apriltag-benchmark \
@@ -68,12 +67,14 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 #install deps
-RUN pip3 install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
+RUN pip install fastapi uvicorn[standard] python-socketio asyncio azure-iot-device \
     azure-storage-blob loguru nmcli pyserial-asyncio dbus-next canopen transforms3d \
-    pytz tzlocal aiohttp aiofiles json5
+    pytz tzlocal aiohttp aiofiles json5 
 
 RUN pip install --upgrade pip setuptools wheel packaging \
  && pip install timezonefinder
+
+RUN pip install --reinstall "numpy<1.24"
 
 # Copy scripts
 RUN mkdir -p /usr/local/bin/scripts
