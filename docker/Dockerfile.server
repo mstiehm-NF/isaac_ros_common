@@ -74,7 +74,8 @@ RUN pip install fastapi uvicorn[standard] python-socketio asyncio azure-iot-devi
 RUN pip install --upgrade pip setuptools wheel packaging \
  && pip install timezonefinder
 
-RUN pip install --reinstall "numpy<1.24"
+#Distutil fix
+RUN pip install "numpy<1.24"
 
 # Copy scripts
 RUN mkdir -p /usr/local/bin/scripts
