@@ -30,7 +30,6 @@ ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 ENV PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources,ignore:::setuptools.command.develop
 RUN echo "Warning: Using the PYTHONWARNINGS environment variable to silence setup.py and easy_install deprecation warnings caused by colcon"
 
-RUN echo "RE-ADDING key"
 # Add ROS 2 apt repository
 RUN --mount=type=cache,target=/var/cache/apt \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
