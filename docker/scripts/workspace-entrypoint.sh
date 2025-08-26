@@ -139,7 +139,8 @@ colcon build --packages-ignore \
     isaac_ros_tensor_list_interfaces \
     isaac_ros_test \
     --allow-overriding isaac_ros_common \
-    --allow-overriding isaac_ros_launch_utils
+    --allow-overriding isaac_ros_launch_utils \
+    --parallel-workers 2
 
 
 # ─── Source the built workspace & record for future shells ────────────────────
