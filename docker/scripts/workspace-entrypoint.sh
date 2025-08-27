@@ -141,7 +141,6 @@ colcon build --packages-ignore \
     --allow-overriding isaac_ros_common \
     --allow-overriding isaac_ros_launch_utils
 
-
 # ─── Source the built workspace & record for future shells ────────────────────
 source /workspaces/isaac_ros-dev/install/setup.bash
 append_user_bashrc "source /workspaces/isaac_ros-dev/install/setup.bash"
