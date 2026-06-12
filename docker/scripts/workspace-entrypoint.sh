@@ -185,26 +185,61 @@ service udev restart
 # ─── Set up ROS logging directory ────────────────────────────────────────────────
 export ROS_LOG_DIR=$LOGGING_DIR
 
+configure_log_cleanup() {
+  LOG_RETENTION_DAYS=7
+  LOG_MAX_MB=1024
+
+  if [[ -f "${MACHINE_CONFIG_PATH}" ]]; then
+    LOG_ROUTE=".desired.machine_config.log_config"
+    CONFIGURED_LOG_RETENTION_DAYS=$(jq -r "${LOG_ROUTE}.log_retention_days" "${MACHINE_CONFIG_PATH}")
+    CONFIGURED_LOG_MAX_MB=$(jq -r "${LOG_ROUTE}.log_max_mb" "${MACHINE_CONFIG_PATH}")
+
+    if [[ "${CONFIGURED_LOG_RETENTION_DAYS}" != "null" ]] && [[ "${CONFIGURED_LOG_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
+      LOG_RETENTION_DAYS="${CONFIGURED_LOG_RETENTION_DAYS}"
+    else
+      echo "ROS log retention time is not set or invalid, defaulting to ${LOG_RETENTION_DAYS} days"
+    fi
+
+    if [[ "${CONFIGURED_LOG_MAX_MB}" != "null" ]] && [[ "${CONFIGURED_LOG_MAX_MB}" =~ ^[0-9]+$ ]] && [[ "${CONFIGURED_LOG_MAX_MB}" -gt 0 ]]; then
+      LOG_MAX_MB="${CONFIGURED_LOG_MAX_MB}"
+    else
+      echo "ROS log max size is not set or invalid, defaulting to ${LOG_MAX_MB} MB"
+    fi
+  else
+    echo "Error: ${MACHINE_CONFIG_PATH} does not exist. Defaulting ROS log cleanup settings."
+  fi
+}
+
+cleanup_logs_by_size() {
+  local max_bytes=$((LOG_MAX_MB * 1024 * 1024))
+  local current_bytes
+  current_bytes=$(du -sb "${ROS_LOG_DIR}" 2>/dev/null | awk '{print $1}')
+
+  if [[ -z "${current_bytes}" ]] || [[ "${current_bytes}" -le "${max_bytes}" ]]; then
+    return
+  fi
+
+  echo "ROS log directory is ${current_bytes} bytes; pruning oldest files to stay under ${LOG_MAX_MB} MB"
+  while IFS= read -r -d '' log_file; do
+    if [[ "${current_bytes}" -le "${max_bytes}" ]]; then
+      break
+    fi
+
+    if [[ -f "${log_file}" ]]; then
+      file_bytes=$(stat -c %s "${log_file}" 2>/dev/null || echo 0)
+      rm -f -- "${log_file}" && current_bytes=$((current_bytes - file_bytes))
+    fi
+  done < <(find "${ROS_LOG_DIR}" -type f -printf '%T@ %p\0' | sort -z -n | cut -z -d ' ' -f2-)
+
+  find "${ROS_LOG_DIR}" -mindepth 1 -type d -empty -delete
+}
+
 autodelete_logs() {
   while true; do
-    if [[ -f "${MACHINE_CONFIG_PATH}" ]]; then
-      LOG_ROUTE=".desired.machine_config.log_config"
-      LOG_RETENTION_DAYS=$(jq -r "${LOG_ROUTE}.log_retention_days" "${MACHINE_CONFIG_PATH}")
-        if [[ "${LOG_RETENTION_DAYS}" != "null" ]] && [[ "${LOG_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
-          export LOG_RETENTION_DAYS
-          echo "ROS Log retention time is set to ${LOG_RETENTION_DAYS} days"
-        else
-          echo "ROS Log retention time is not set or invalid, defaulting to 7 days"
-          export LOG_RETENTION_DAYS=7
-        fi
-    else
-      echo "Error: ${MACHINE_CONFIG_PATH} does not exist. Defaulting log retention to 7 days."
-      export LOG_RETENTION_DAYS=7
-    fi
-    # Delete logs older than LOG_RETENTION_DAYS
+    configure_log_cleanup
     echo "Deleting logs older than ${LOG_RETENTION_DAYS} days in ${ROS_LOG_DIR}"
     find "${ROS_LOG_DIR}" -mindepth 1 -mtime +${LOG_RETENTION_DAYS} -delete
-    # Sleep for 3600 seconds
+    cleanup_logs_by_size
     sleep 3600
   done
 }
