@@ -168,6 +168,22 @@ if [[ ! -z "${IMAGE_KEY}" ]]; then
     BASE_IMAGE_KEY=$BASE_IMAGE_KEY.$IMAGE_KEY
 fi
 
+# The 'user' layer is the only thing that creates the 'admin' account, and both
+# test entrypoints chown the workspace to it. scripts/image_layers.config keeps
+# it in the key for CI, but .isaac_ros_common-config is gitignored so a local key
+# can omit it - and then `chown -R admin` fails with "invalid user", the build
+# runs as root over a host-owned mount, and git aborts the whole colcon build
+# with "detected dubious ownership". Keep the layer in the key regardless, in the
+# same position CI uses.
+if [[ "$BASE_IMAGE_KEY" != *".user"* ]]; then
+    if [[ "$BASE_IMAGE_KEY" == *".tests" ]]; then
+        BASE_IMAGE_KEY="${BASE_IMAGE_KEY%.tests}.user.tests"
+    else
+        BASE_IMAGE_KEY="$BASE_IMAGE_KEY.user"
+    fi
+    print_info "Added 'user' layer to image key: ${BASE_IMAGE_KEY}"
+fi
+
 # Check skip image build from env
 if [[ ! -z $SKIP_DOCKER_BUILD ]]; then
     SKIP_IMAGE_BUILD=1
@@ -284,9 +300,16 @@ if [[ -f "${DOCKER_ARGS_FILEPATH}" ]]; then
 fi
 
 if [[ -z "$RUN_TESTS" ]]; then
+    # workspace-entrypoint.sh provisions the user itself and needs root for
+    # setcap/ldconfig/udev, so leave it as the image default.
     ENTRYPOINT="/usr/local/bin/scripts/workspace-entrypoint.sh"
 else
     ENTRYPOINT="/usr/local/bin/scripts/test_entrypoint.sh"
+    # test_entrypoint.sh chowns the workspace to admin and then builds in place,
+    # so it has to run as admin - the same way scripts/run_dev_image.sh runs it
+    # in CI. As root the build would own the mount as root and git would reject
+    # the repo.
+    DOCKER_ARGS+=("--user=admin")
 fi
 
 # Run container from image
