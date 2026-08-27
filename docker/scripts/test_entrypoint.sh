@@ -15,7 +15,11 @@ HOST_USER_GID="${HOST_USER_GID:-1000}"
 # Only the 'user' image layer creates the account, and that layer is not part of
 # every image key (see scripts/image_layers.config), so set the user up here
 # instead of assuming it exists.
-if [ "$(id -u)" -eq 0 ]; then
+#
+# A host uid of 0 is handled separately below: there is no unprivileged account
+# to drop to, and treating it like any other id would rename the root account
+# and then loop forever re-execing `gosu 0:0` into this same branch.
+if [ "$(id -u)" -eq 0 ] && [ "${HOST_USER_UID}" != "0" ]; then
     # Move the group onto the host gid. Renaming whoever already holds the gid is
     # the common case; the `user` layer instead leaves a group named ${USERNAME}
     # pinned at gid 1000, which has to be retargeted rather than recreated.
@@ -71,6 +75,12 @@ if [ "$(id -u)" -eq 0 ]; then
     # Address the target by uid:gid so this works even if the rename above did not.
     export ISAAC_ROS_WS_REOWNED=1
     exec gosu "${HOST_USER_UID}:${HOST_USER_GID}" "$0" "$@"
+elif [ "$(id -u)" -eq 0 ]; then
+    # Host user is root, so the mount is already root-owned and git is satisfied
+    # running as root. Just normalise anything an earlier non-root run left and
+    # carry on in this process - there is nothing to drop to.
+    chown -R "${HOST_USER_UID}:${HOST_USER_GID}" "${ISAAC_ROS_WS}"
+    export ISAAC_ROS_WS_REOWNED=1
 fi
 
 # Reached either after the re-exec above, or directly when the container was
