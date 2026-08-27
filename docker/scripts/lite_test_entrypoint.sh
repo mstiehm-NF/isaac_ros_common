@@ -16,28 +16,48 @@ HOST_USER_GID="${HOST_USER_GID:-1000}"
 # every image key (see scripts/image_layers.config), so set the user up here
 # instead of assuming it exists.
 if [ "$(id -u)" -eq 0 ]; then
-    if ! getent group "${HOST_USER_GID}" >/dev/null; then
-        groupadd --gid "${HOST_USER_GID}" "${USERNAME}"
-    else
-        CONFLICTING_GROUP_NAME=$(getent group "${HOST_USER_GID}" | cut -d: -f1)
-        if [ "${CONFLICTING_GROUP_NAME}" != "${USERNAME}" ]; then
-            groupmod -o --gid "${HOST_USER_GID}" -n "${USERNAME}" "${CONFLICTING_GROUP_NAME}"
+    # Move the group onto the host gid. Renaming whoever already holds the gid is
+    # the common case; the `user` layer instead leaves a group named ${USERNAME}
+    # pinned at gid 1000, which has to be retargeted rather than recreated.
+    if getent group "${HOST_USER_GID}" >/dev/null; then
+        EXISTING_GROUP=$(getent group "${HOST_USER_GID}" | cut -d: -f1)
+        if [ "${EXISTING_GROUP}" != "${USERNAME}" ]; then
+            groupmod -o --gid "${HOST_USER_GID}" -n "${USERNAME}" "${EXISTING_GROUP}"
         fi
+    elif getent group "${USERNAME}" >/dev/null; then
+        groupmod -o --gid "${HOST_USER_GID}" "${USERNAME}"
+    else
+        groupadd --gid "${HOST_USER_GID}" "${USERNAME}"
     fi
 
-    if ! getent passwd "${HOST_USER_UID}" >/dev/null; then
-        useradd --no-log-init --uid "${HOST_USER_UID}" --gid "${HOST_USER_GID}" -m "${USERNAME}"
-    else
-        CONFLICTING_USER_NAME=$(getent passwd "${HOST_USER_UID}" | cut -d: -f1)
-        if [ "${CONFLICTING_USER_NAME}" != "${USERNAME}" ]; then
-            usermod -l "${USERNAME}" -u "${HOST_USER_UID}" -m -d "/home/${USERNAME}" "${CONFLICTING_USER_NAME}"
+    # Same three cases for the account. Dockerfile.user creates ${USERNAME} at a
+    # fixed uid 1000, so on any other host uid the name is already taken and
+    # useradd would fail.
+    if getent passwd "${HOST_USER_UID}" >/dev/null; then
+        EXISTING_USER=$(getent passwd "${HOST_USER_UID}" | cut -d: -f1)
+        if [ "${EXISTING_USER}" != "${USERNAME}" ]; then
+            usermod -l "${USERNAME}" -u "${HOST_USER_UID}" -g "${HOST_USER_GID}" \
+                -m -d "/home/${USERNAME}" "${EXISTING_USER}"
         fi
+    elif getent passwd "${USERNAME}" >/dev/null; then
+        usermod -u "${HOST_USER_UID}" -g "${HOST_USER_GID}" "${USERNAME}"
+    else
+        useradd --no-log-init --uid "${HOST_USER_UID}" --gid "${HOST_USER_GID}" -m "${USERNAME}"
     fi
 
     # Resolve the name actually attached to the uid: if usermod could not rename
     # the pre-existing account, the build still has to address the right user.
     RUNTIME_USER=$(getent passwd "${HOST_USER_UID}" | cut -d: -f1)
     RUNTIME_HOME=$(getent passwd "${HOST_USER_UID}" | cut -d: -f6)
+
+    # Stop rather than carry on with an empty name: the paths below would then
+    # resolve to /etc/sudoers.d itself and chmod 0440 would break sudo for the
+    # whole container. Carrying on past a failed account setup is the exact bug
+    # this script is fixing, so fail loudly instead.
+    if [ -z "${RUNTIME_USER}" ] || [ -z "${RUNTIME_HOME}" ]; then
+        echo "entrypoint: could not provision an account for uid ${HOST_USER_UID}:${HOST_USER_GID}" >&2
+        exit 1
+    fi
 
     mkdir -p "${RUNTIME_HOME}"
     chown "${HOST_USER_UID}:${HOST_USER_GID}" "${RUNTIME_HOME}"
