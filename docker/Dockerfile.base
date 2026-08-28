@@ -205,8 +205,13 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     corepack enable
 
 # Install CuPy and HDBSCAN
+# cupy-cuda12x 14.x requires numpy>=2.0 and would silently upgrade past the
+# "numpy>=1.24.4,<2" pin above. This image's apt stack (python3-opencv, and the
+# ros-humble cv_bridge/vision_opencv packages) is built against numpy 1.21, so
+# numpy 2 breaks "import cv2" with "_ARRAY_API not found" at runtime, not just
+# in tests. Stay on cupy 13.x, which supports numpy 1.x.
 RUN python3 -m pip install -U \
-    cupy-cuda12x \
+    "cupy-cuda12x<14" \
     hdbscan
 
 # Setup Jetson debian repositories
