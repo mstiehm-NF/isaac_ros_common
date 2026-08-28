@@ -168,20 +168,32 @@ if [[ ! -z "${IMAGE_KEY}" ]]; then
     BASE_IMAGE_KEY=$BASE_IMAGE_KEY.$IMAGE_KEY
 fi
 
-# The 'user' layer is the only thing that creates the 'admin' account, and both
-# test entrypoints chown the workspace to it. scripts/image_layers.config keeps
-# it in the key for CI, but .isaac_ros_common-config is gitignored so a local key
-# can omit it - and then `chown -R admin` fails with "invalid user", the build
-# runs as root over a host-owned mount, and git aborts the whole colcon build
-# with "detected dubious ownership". Keep the layer in the key regardless, in the
-# same position CI uses.
-if [[ "$BASE_IMAGE_KEY" != *".user"* ]]; then
-    if [[ "$BASE_IMAGE_KEY" == *".tests" ]]; then
-        BASE_IMAGE_KEY="${BASE_IMAGE_KEY%.tests}.user.tests"
-    else
-        BASE_IMAGE_KEY="$BASE_IMAGE_KEY.user"
+# The test entrypoints chown the workspace to 'admin', and only the 'user' layer
+# creates that account. scripts/image_layers.config keeps it in the key for CI,
+# but .isaac_ros_common-config is gitignored so a local key can omit it - and
+# then `chown -R admin` fails with "invalid user", the build runs as root over a
+# host-owned mount, and git aborts the colcon build with "detected dubious
+# ownership".
+#
+# Only the tests path needs this. workspace-entrypoint.sh provisions 'admin'
+# itself at HOST_USER_UID, and its groupadd/useradd are silenced with
+# &>/dev/null - so precreating 'admin' at a different uid there would fail
+# invisibly and leave the backend running as the wrong user.
+BUILD_ARGS=()
+if [[ "$BASE_IMAGE_KEY" == *"tests"* ]]; then
+    if [[ "$BASE_IMAGE_KEY" != *".user"* ]]; then
+        if [[ "$BASE_IMAGE_KEY" == *".tests" ]]; then
+            BASE_IMAGE_KEY="${BASE_IMAGE_KEY%.tests}.user.tests"
+        else
+            BASE_IMAGE_KEY="$BASE_IMAGE_KEY.user"
+        fi
+        print_info "Added 'user' layer to image key: ${BASE_IMAGE_KEY}"
     fi
-    print_info "Added 'user' layer to image key: ${BASE_IMAGE_KEY}"
+
+    # Dockerfile.user defaults to uid/gid 1000. Left at the default, the
+    # entrypoint's `chown -R admin` would hand the bind-mounted source tree to
+    # uid 1000 and lock out any developer whose host uid differs.
+    BUILD_ARGS+=("-a" "USER_UID=$(id -u)" "-a" "USER_GID=$(id -g)")
 fi
 
 # Check skip image build from env
@@ -220,7 +232,7 @@ print_info "Launching Isaac ROS Dev container with image key ${BASE_IMAGE_KEY}: 
 # Build image to launch
 if [[ $SKIP_IMAGE_BUILD -ne 1 ]]; then
     print_info "Building $BASE_IMAGE_KEY base as image: $BASE_NAME"
-   $ROOT/build_image_layers.sh --image_key "$BASE_IMAGE_KEY" --image_name "$BASE_NAME"
+   $ROOT/build_image_layers.sh --image_key "$BASE_IMAGE_KEY" --image_name "$BASE_NAME" "${BUILD_ARGS[@]}"
 
     # Check result
     if [ $? -ne 0 ]; then
